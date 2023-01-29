@@ -79,7 +79,7 @@ function Add() {
                             data.forEach(element => {
                                 let elName = element.Name;
                                 elName = elName.toLowerCase()
-                                if(elName.includes(found)){
+                                if(elName.startsWith(found)){
                                     resArr.push(element)
                                 }
                             });

@@ -1,4 +1,3 @@
-const { get } = require('http');
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
@@ -6,12 +5,12 @@ const rl = readline.createInterface({
 });
 
 function getNumbers(arr){
-    let resArr = arr.filter(str => !isNaN(parseInt(str)))
+    let resArr = arr.filter(str => !isNaN(str))
     return resArr
 }
 
 function getWords(arr){
-    let resArr = arr.filter(str => isNaN(parseInt(str)))
+    let resArr = arr.filter(str => isNaN(str))
     return resArr
 }
 

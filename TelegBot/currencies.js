@@ -14,9 +14,9 @@ function loadData(filename, content){
 }
 async function getMono(){
     let content = await axios.get("https://api.monobank.ua/bank/currency")
-    content = content.data
+    const {data} = content
     let resObj = {}
-    for (let obj of content){
+    for (let obj of data){
         if (obj.currencyCodeA === 840 && obj.currencyCodeB === 980){
             resObj.monoUsdSell = Number(obj.rateSell)
             resObj.monoUsdBuy = Number(obj.rateBuy)
@@ -31,9 +31,9 @@ async function getMono(){
 
 async function getPrivat(){
     let content = await axios.get("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
-    content = content.data
+    const {data} = content
     let resObj = {}
-    for (let obj of content){
+    for (let obj of data){
         if (obj.ccy === "USD"){
             resObj.privatUsdSell = Number(obj.sale)
             resObj.privatUsdBuy = Number(obj.buy)
@@ -47,27 +47,19 @@ async function getPrivat(){
 }
 
 async function getExchange(){
-    let data = getData(DBNAME)
-    if (data === {}){
+    try {
         let resObj = {}
         let privat = await getPrivat()
         let mono = await getMono()
         resObj = Object.assign(privat,mono)
-        resObj.time = Date.now()
         loadData(DBNAME,resObj)
+        console.log("kaifi")
         return resObj
-    }
-    if (Date.now() - data.time < 120*(10**3)){
+    } catch (err) {
+        console.log(err)
+        let data = getData(DBNAME)
+        console.log("nihuya ne kaifi")
         return data
-    }
-    else {
-        let resObj = {}
-        let privat = await getPrivat()
-        let mono = await getMono()
-        resObj = Object.assign(privat,mono)
-        resObj.time = Date.now()
-        loadData(DBNAME,resObj)
-        return resObj
     }
 }
 

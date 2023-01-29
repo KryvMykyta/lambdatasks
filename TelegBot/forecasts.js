@@ -20,23 +20,37 @@ async function getData(URL) {
     }
 }
 
+function getDayString(str){
+    const daysName = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
+    let data = new Date("2023-02-03")
+
+    let resStr = daysName[data.getDay()-1] + ", the " + data.getDate() + " of " + monthNames[data.getMonth()]
+    return resStr
+}
+
 function logWeather(forecasts, period) {
     let resultStr = `Forecast for Kyiv\n`;
     let objects = {};
     for (let i = 0; i < forecasts.length; i++) {
         if (getHours(forecasts[i].dt_txt) % period == 0) {
             let date = forecasts[i].dt_txt.split(" ");
+            let hrs = date[1]
+            let temperature = Math.round(forecasts[i].main.temp)
+            let feels = Math.round(forecasts[i].main.feels_like)
+            let weather = forecasts[i].weather[0].main
             if (Object.keys(objects).includes(date[0])) {
-                objects[date[0]] += `${date[1]}, ${forecasts[i].main.temp} Celsius, Feels like ${forecasts[i].main.feels_like} Celsius, ${forecasts[i].weather[0].main}\n`;
+                objects[date[0]] += `\t ${hrs}, ${temperature} Celsius, Feels like ${feels} Celsius, ${weather}\n`;
             }
             else {
-                objects[date[0]] = `${date[1]}, ${forecasts[i].main.temp} Celsius, Feels like ${forecasts[i].main.feels_like} Celsius, ${forecasts[i].weather[0].main}\n`;
+                objects[date[0]] = `\t ${hrs}, ${temperature} Celsius, Feels like ${feels} Celsius, ${weather}\n`;
             }
         }
     }
     let keys = Object.keys(objects)
     for (let i = 0; i < keys.length; i++) {
-        resultStr += keys[i] + "\n";
+        resultStr += getDayString(keys[i]) + "\n";
         resultStr += objects[keys[i]];
     }
     return resultStr;
@@ -51,7 +65,6 @@ function getHours(str) {
 
 export async function getMessage(period) {
     let data = await getData(URL);
-    let city = data.city.name
     let forecasts = data.list 
     let resultStr = logWeather(forecasts, period);
     return resultStr;
