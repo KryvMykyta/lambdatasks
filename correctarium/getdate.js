@@ -1,40 +1,41 @@
+function setNextDay(date){
+    date.setHours(12)
+    date.setMinutes(0)
+    date.setSeconds(0)
+}
+
+function setDayEnd(date){
+    date.setHours(19)
+    date.setMinutes(0)
+    date.setSeconds(0)
+}
+
+
 function getDeadline(deadline,time){
     while (time !== 0){
         if (deadline.getDay() == 6 || deadline.getDay() == 7){
             deadline.setDate(deadline.getDate() + 7 - deadline.getDay() + 1)
-            deadline.setHours(12)
-            deadline.setMinutes(0)
-            deadline.setSeconds(0)
+            setNextDay(deadline)
         }
         else {
             if (deadline.getHours() >= 19){
                 deadline.setDate(deadline.getDate()+1)
-                deadline.setHours(12)
-                deadline.setMinutes(0)
-                deadline.setSeconds(0)
+                setNextDay(deadline)
             }
             else if (deadline.getHours() < 12){
-                deadline.setHours(12)
-                deadline.setMinutes(0)
-                deadline.setSeconds(0)
+                setNextDay(deadline)
             }
             else {
                 let newDate = new Date(deadline)
-                newDate.setHours(19)
-                newDate.setMinutes(0)
-                newDate.setSeconds(0)
+                setDayEnd(newDate)
                 if (time > newDate - deadline){
                     time -= newDate - deadline
                     deadline.setDate(deadline.getDate()+1)
-                    deadline.setHours(12)
-                    deadline.setMinutes(0)
-                    deadline.setSeconds(0)
+                    setNextDay(deadline)
                 }
                 else if (time === newDate - deadline){
                     time -= newDate - deadline
-                    deadline.setHours(19)
-                    deadline.setMinutes(0)
-                    deadline.setSeconds(0)
+                    setDayEnd(deadline)
                     return deadline
                 }
                 else {

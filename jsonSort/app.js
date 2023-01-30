@@ -34,18 +34,24 @@ function checkLevel(data){
 
 async function main(){
     let res = getLinks(LISTS)
-    let counter = [0,0]
-    for (let link of res){
+    let data = await Promise.all(res.map(async (link) => {
+        return getInfo(link)
+    }))
+    let counter = {
+        "true": 0,
+        "false": 0
+    }
+    for (let el of data){
         try{
-            if(checkLevel(await getInfo(link))) {
-                counter[0]+=1
+            if(checkLevel(el)) {
+                counter["true"]+=1
             }
             else {
-                counter[1]+=1
+                counter["false"]+=1
             }
         }
         catch (err){
-            console.log(link," is not accessable")
+            console.log(el," is not accessable")
         }
     }
     

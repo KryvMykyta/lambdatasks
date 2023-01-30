@@ -8,29 +8,29 @@ function union(setA, setB) {
     return _union;
 }
 
-function uniqueWords(fileName, set) {
+function uniqueWords(fileName, alreadyExist) {
     let words = fs.readFileSync(fileName, { encoding: 'utf-8' }).split("\n");
     let unique = new Set(words);
-    return union(set, unique);
+    return union(alreadyExist, unique);
 }
 
-function amountOfWords(fileName, map) {
+function amountOfWords(fileName, wordsCount) {
     let words = fs.readFileSync(fileName, { encoding: 'utf-8' }).split("\n");
     let unique = new Set(words);
     for (let item of unique) {
-        if (map.get(item) != undefined) {
-            map.set(item, map.get(item) + 1);
+        if (wordsCount.get(item) != undefined) {
+            wordsCount.set(item, wordsCount.get(item) + 1);
         }
         else {
-            map.set(item, 1);
+            wordsCount.set(item, 1);
         }
     };
-    return map;
+    return wordsCount;
 }
 
-function appearsIn20Files(map) {
+function appearsIn20Files(wordsCount) {
     let count = 0;
-    for (const [key, value] of map) {
+    for (const [key, value] of wordsCount) {
         if (value === 20) {
             count++;
         }
@@ -38,9 +38,9 @@ function appearsIn20Files(map) {
     return count;
 }
 
-function appearsIn10plusFiles(map) {
+function appearsIn10plusFiles(wordsCount) {
     let count = 0;
-    for (const [key, value] of map) {
+    for (const [key, value] of wordsCount) {
         if (value >= 10) {
             count++;
         }
@@ -50,36 +50,30 @@ function appearsIn10plusFiles(map) {
 
 function result(num) {
     console.log("num = ",num);
-    let start = new Date().getTime();
-    let set = new Set();
-    let map = new Map();
-    let item = 0;
+    console.time("total time : ")
+    let words = new Set();
+    let wordsCounter = new Map();
     for (let i = 0; i < 20; i++) {
-        set = uniqueWords("./files"+num+"/out" + i + ".txt", set);
-        map = amountOfWords("./files"+num+"/out" + i + ".txt", map);
+        words = uniqueWords(`./files${num}/out${i}.txt`,words);
+        wordsCounter = amountOfWords(`./files${num}/out${i}.txt`, wordsCounter);
     }
 
-    console.log("unique words : " + set.size);
+    console.time("unique time :")
+    console.log("unique words : " + words.size);
+    console.timeEnd("unique time :")
 
-    let unq = new Date().getTime();
-    let time1 = unq - start;
-    console.log("start-unique :" + time1 / 1000 +"\n");
-
-    let inTwenty =  appearsIn20Files(map);
-    let twenty = new Date().getTime();
-    let time2 = twenty - unq;
+    console.time("twenty - unique time :")
+    let inTwenty =  appearsIn20Files(wordsCounter);
+    console.timeEnd("twenty - unique time :")
     console.log("in twenty files : " + inTwenty);
-    console.log("twenty - unique : " + time2 / 1000 +"\n");
+    
 
-    let inMoreTen = appearsIn10plusFiles(map);
-    let ten = new Date().getTime();
-    let time3 = ten - twenty;
+    console.time("more ten time:")
+    let inMoreTen = appearsIn10plusFiles(wordsCounter);
+    console.timeEnd("more ten time:")
     console.log("more ten : " + inMoreTen);
-    console.log("ten - twenty: " + time3 / 1000 +"\n");
 
-    let total = ten - start;
-
-    console.log("total time : " + total/1000);
+    console.timeEnd("total time : ");
 }
 
 function main() {

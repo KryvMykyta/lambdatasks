@@ -1,5 +1,3 @@
-// import { getDeadline, getPrice, getTime} from "./getdate.js";
-// import express from 'express';
 const express = require('express')
 const info = require('./getdate.js')
 

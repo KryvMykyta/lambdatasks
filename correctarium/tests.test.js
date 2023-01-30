@@ -80,4 +80,12 @@ test('Sunday 20:00:00, 1hour', () => {
     expect(deadline.getTime()).toBe(result.getTime());
 });
 
+test('Sunday 16:00:00, 64hour', () => {
+    let date = new Date('22 January 2023 16:00')
+    let time = 64*3600*1000
+    let deadline = info.getDeadline(date,time)
+    let result = new Date('2 February 2023 17:00')
+    expect(deadline.getTime()).toBe(result.getTime());
+});
+
 
