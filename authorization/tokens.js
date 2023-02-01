@@ -1,73 +1,62 @@
 const jwt = require('jsonwebtoken')
-const {getUser} = require('./dbutils.js')
+const { ApiError } = require('./ApiError.js')
+const {getUserByEmail, getUserById} = require('./dbutils.js')
 require('dotenv').config()
 
 const secretKey = process.env.SECRET
 
-async function generateAccessTokenLogin(req,res){
+async function loginUser(req,res){
     const {email,pass} = req.body
-    const info = {
-        "email": email,
-        "pass": pass
-    }
     try{
-        const userCredentials = await getUser(email)
+        const userCredentials = await getUserByEmail(email)
         
         if (userCredentials === null || (email !== userCredentials.email || pass !== userCredentials.pass)) {
-            res.send(406).send("Invalid credentials")
+            res.status(406).send("Invalid credentials")
         }
         else{
-            let expires = Math.round(Math.random() * (60 - 30) + 30);
-            const accessToken = jwt.sign(info, secretKey, {
-                expiresIn: `${expires}s`
+            let expiresAccess = Math.round(Math.random() * (60 - 30) + 30);
+            const accessToken = jwt.sign({"email":userCredentials.email}, secretKey, {
+                expiresIn: `${expiresAccess}s`
             });
-    
-            return res.status(200).json({ accessToken });
+
+            const refreshToken = jwt.sign({"_id":userCredentials["_id"]}, secretKey, {
+                expiresIn: `1d`
+            });
+            
+            return res.status(200).json({accessToken, refreshToken});
         }
     } catch(err) {
+        console.log(err)
         return res.status(500).send("server error")
     }   
 }
 
-async function refreshToken(req,res){
+async function refresh(req,res){
     let body = req.headers.authorization
     console.log(req.headers)
     if (!body) {
-        res.status(401).send("Token not provided")
+        return res.status(400).send("Token not provided")
     }
-    let refresh = body.split(" ")[1]
-    try{
-        try {
-            const decoded = jwt.verify(refresh, secretKey)
-            const info = {
-                "email":decoded["email"],
-                "pass":decoded["pass"]
-            }
-            try {
-                const user = await getUser(info["email"])
-                if (user["refreshToken"] === refresh){
-                    let expires = Math.round(Math.random() * (60 - 30) + 30);
-                    const accessToken = jwt.sign(info, secretKey, {
-                        expiresIn: `${expires}s`
-                    });
-                    return res.status(200).json({ accessToken });
-                }
-                else {
-                    return res.status(401).send("unauthorized")
-                }
-            } catch(err){
-                return res.status(500).send("server error")
-            }
-        } catch (error) {
-            if (err instanceof jwt.JsonWebTokenError){
-                res.send(401).send("Invalid token")
-            }  
-        }
+    let oldRefreshToken = body.split(" ")[1]
+    try {
+        const decoded = jwt.verify(oldRefreshToken, secretKey)
+        const user = await getUserById(decoded["_id"])
+        console.log(user)
+        if (!user) throw new ApiError(401, "Unauthorized")
+        let info = {"email":user.email}
+        let expires = Math.round(Math.random() * (60 - 30) + 30);
+        const accessToken = jwt.sign(info, secretKey, {
+            expiresIn: `${expires}s`
+        });
+        const refreshToken = jwt.sign({"_id":user["_id"]}, secretKey, {
+            expiresIn: `1d`
+        });
+        return res.status(200).send({accessToken, refreshToken});
+    } catch (err) {
+        console.log(err.message)
+        if (err instanceof ApiError) return res.status(err.status).send(err.message)
         
-    }catch (err) {
-        return res.status(401).send("unauthorized")
     }
-
 }
 
 function authVerify(req,res,next){
@@ -77,46 +66,30 @@ function authVerify(req,res,next){
     }
     let token = body.split(" ")[1]
     try {
-        jwt.verify(token,secretKey)
+        req.user = jwt.verify(token,secretKey)
+        if (!req.user.email) throw new ApiError(401,"Expired or invalid token")
     } catch (err) {
-        if (err instanceof jwt.JsonWebTokenError){
-            return res.status(401).send("Invalid token")
-        }    
+        console.log(err.message)
+        if (err instanceof ApiError) return res.status(err.status).send(err.message)
+        return res.status(401).send("Expired or invalid token")
     }
     next()
 }
 
 async function getMe(req,res) {
-    let body = req.headers.authorization
     const request_num = req.params.num
-    try {
-        let token = body.split(" ")[1]
-        try{
-            const decoded = jwt.verify(token,process.env.SECRET)
-            try{
-                const user = await getUser(decoded["email"])
-                let response = {
-                    "request_num": request_num,
-                    "data": {
-                        "email": user["email"]
-                    }
-                }
-                return res.status(200).send(response)
-            } catch(err) {
-                return res.status(500).send("server error")
-            }
-        } catch(err) {
-            return res.status(401).send("unauthorized")
+    let response = {
+        "request_num": request_num,
+        "data": {
+            "email": req.user.email
         }
-    } catch (err){
-        return res.status(401).send("unauthorized")
     }
-    
+    return res.status(200).send(response)
 }
 
 module.exports = {
-    generateAccessTokenLogin,
-    refreshToken,
+    loginUser,
+    refresh,
     authVerify,
     getMe
 }

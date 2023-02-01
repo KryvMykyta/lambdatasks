@@ -1,5 +1,6 @@
-const { MongoClient, ServerApiVersion} = require('mongodb');
-const jwt = require('jsonwebtoken')
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+const jwt = require('jsonwebtoken');
+const { ApiError } = require('./ApiError');
 
 require('dotenv').config()
 
@@ -14,48 +15,45 @@ async function createUser(req,res){
         await client.connect()
         console.log("connected")
         const users = client.db("authorization").collection("users")
-        console.log(await users.findOne({"email":email}))
-        try{
-            const refreshToken = jwt.sign({
-                "email": email,
-                "pass": pass,
-                "type": "refresh"
-            }, process.env.SECRET);
-            console.log(refreshToken)
-            await users.insertOne({
-                "email":email,
-                "pass":pass,
-                "refreshToken":refreshToken
-            })
-            client.close()
-            return res.status(200).send("User succesfully created")
-        } catch(err){
-            client.close()
-            return res.status(400).send("User already exist")
-        }
+        let user = await users.findOne({"email":email})
+        if (user) throw new ApiError(400, "User already exist")
+        await users.insertOne({
+            "email":email,
+            "pass":pass,
+        })
+        client.close()
+        return res.status(200).send("User succesfully created")
         
     } catch (err) {
+        console.log(err)
+        if (err instanceof ApiError) return res.status(err.status).send(err.message)
         return res.status(500).send("server error")
     }
 }
 
 
-async function getUser(email){
-    try{
-        await client.connect()
-        const users = client.db("authorization").collection("users")
-        let user = await users.findOne({"email":email})
-        client.close()
-        return user // null or user:{}
-    } catch (err) {
-        console.log(err)
-    }
+async function getUserByEmail(email){
+    await client.connect()
+    const users = client.db("authorization").collection("users")
+    let user = await users.findOne({"email":email})
+    client.close()
+    return user // null or user:{}
+
+}
+
+async function getUserById(id){
+    await client.connect()
+    const users = client.db("authorization").collection("users")
+    let user = await users.findOne({"_id":new ObjectId(id)})
+    client.close()
+    return user // null or user:{}
 }
 
 
 
 module.exports = {
     createUser,
-    getUser
+    getUserByEmail,
+    getUserById
 }
 
