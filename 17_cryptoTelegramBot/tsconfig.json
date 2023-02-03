@@ -10,7 +10,7 @@
       "strict": true,
       "esModuleInterop": true,
       "moduleResolution": "node",
-      "outDir": "./test",
+      "outDir": "./dist",
       "baseUrl": "src",
       "paths": {
         "@/*": ["*"]

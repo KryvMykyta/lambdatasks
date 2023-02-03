@@ -4,10 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const node_cron_1 = __importDefault(require("node-cron"));
 const infoController_1 = require("./controllers/infoController");
-const updateDB_1 = require("./dbutils/updateDB");
-node_cron_1.default.schedule('*/5 * * * *', updateDB_1.uploadData);
+// cron.schedule('*/5 * * * *', uploadData);
 const app = (0, express_1.default)();
 const PORT = 3000;
 app.use(express_1.default.json());
