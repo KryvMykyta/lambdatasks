@@ -4,7 +4,7 @@ import { createTable } from "./migration/createDB";
 import { getMessageOfFullData, getMessageOfList } from "./utils/getCryptoData";
 import { addLastViewed, addToFavourite, addUserToDb, checkInFavourite, deleteFavourite, deleteLastViewed, sendFavourite, updateLastViewed} from "./utils/dbUtils";
 const sqlite3 = require('sqlite3').verbose();
-dotenv.config({path:"../.env"})
+dotenv.config()
 
 
 
