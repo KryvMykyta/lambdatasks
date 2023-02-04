@@ -50,7 +50,7 @@ export async function getData(req: Request, res: Response) {
         }
         else { 
             client.close()
-            return res.status(200).send({link: content["link"]})
+            return res.status(200).redirect(content.link)
         }
     } catch(err) {
         return res.status(500).send("Server error")
