@@ -73,12 +73,12 @@ function createTable() {
             throw err;
     });
     const sql = [
-        "CREATE TABLE IF NOT EXISTS exchanges1 (",
+        "CREATE TABLE IF NOT EXISTS exchanges (",
         "currency VARCHAR(255) CHARACTER SET utf8mb4,",
         "kucoin VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinStats VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinBase VARCHAR(255) CHARACTER SET utf8mb4,",
-        "coinMarketCap VARCHAR(255) CHARACTER SET utf8mb4,",
+        // "coinMarketCap VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinPaprika VARCHAR(255) CHARACTER SET utf8mb4,",
         "time BIGINT",
         ")"
@@ -115,7 +115,7 @@ function uploadData() {
             loadingData.push(prices);
         }
         console.log("loading: \n", loadingData);
-        let sql = `INSERT INTO exchanges1 (currency, kucoin, coinStats, coinBase, coinPaprika, time) VALUES ?`;
+        let sql = `INSERT INTO exchanges (currency, kucoin, coinStats, coinBase, coinPaprika, time) VALUES ?`;
         connection.query(sql, [loadingData], function (err, result) {
             if (err)
                 throw err;

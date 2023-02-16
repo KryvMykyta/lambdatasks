@@ -4,7 +4,7 @@ type coinSymbol = string
 type currencyInfo = {[key: string] : string | number}
 type timeInfo = {[key : string] : number}
 async function getLatestData(coinSymbol: coinSymbol) : Promise<currencyInfo> {
-    const url = `http://54.93.215.166:3000?currency=${coinSymbol}&time=300000`
+    const url = `http://18.159.129.159:3000?currency=${coinSymbol}&time=300000`
     const content = await axios.get(url)
     let {data} = content
     console.log(coinSymbol, data)
@@ -38,7 +38,7 @@ function formatListData(currenciesData: Array<currencyInfo>) : string {
 
 async function getAllInfo(coinSymbol: string) : Promise<timeInfo> {
     let time = 24*60*60*1000 + 2.5*60*1000 + 500
-    const url = `http://54.93.215.166:3000?currency=${coinSymbol}&time=${time}`
+    const url = `http://18.159.129.159:3000?currency=${coinSymbol}&time=${time}`
     const content = await axios.get(url)
     let {data} = content
     const timeStart = new Date().getTime()
