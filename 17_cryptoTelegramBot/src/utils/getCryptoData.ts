@@ -64,13 +64,13 @@ async function getAllInfo(coinSymbol: string) : Promise<timeInfo> {
 }
 
 function formatFullData(timeInfo : timeInfo) : string{
-    let str = `Latest: ${timeInfo.latest}\n`+
-    `30min: ${timeInfo.Thirty}\n`+
-    `1hour: ${timeInfo.Hour}\n`+ 
-    `3hours: ${timeInfo.ThreeHours}\n`+
-    `6hours: ${timeInfo.SixHours}\n`+
-    `12hours: ${timeInfo.TwelweHours}\n`+
-    `24hours: ${timeInfo.TwentyFourHours}`
+    let str = `Latest: ${timeInfo.latest || "No Data"}\n`+
+    `30min: ${timeInfo.Thirty || "No Data"}\n`+
+    `1hour: ${timeInfo.Hour || "No Data"}\n`+ 
+    `3hours: ${timeInfo.ThreeHours || "No Data"}\n`+
+    `6hours: ${timeInfo.SixHours || "No Data"}\n`+
+    `12hours: ${timeInfo.TwelweHours || "No Data"}\n`+
+    `24hours: ${timeInfo.TwentyFourHours || "No Data"}`
     return str
 }
 

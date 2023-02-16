@@ -64,7 +64,7 @@ export async function checkInFavourite(id: number, coinSymbol: string, callback:
                     one_time_keyboard: true,
                     remove_keyboard: true,
                     keyboard: [
-                      [{text: 'Delete from favourite'}],
+                        [{text: 'Delete from favourite'}],
                     ],
                 }
             })
@@ -77,7 +77,7 @@ export async function checkInFavourite(id: number, coinSymbol: string, callback:
                     one_time_keyboard: true,
                     remove_keyboard: true,
                     keyboard: [
-                      [{text: 'Add to favourite'}],
+                        [{text: 'Add to favourite'}],
                     ],
                 }
             })
