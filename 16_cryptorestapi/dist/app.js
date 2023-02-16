@@ -4,8 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const node_cron_1 = __importDefault(require("node-cron"));
 const infoController_1 = require("./controllers/infoController");
-// cron.schedule('*/5 * * * *', uploadData);
+const updateDB_1 = require("./dbutils/updateDB");
+(0, updateDB_1.createDB)();
+(0, updateDB_1.createTable)();
+node_cron_1.default.schedule('*/1 * * * *', updateDB_1.uploadData);
 const app = (0, express_1.default)();
 const PORT = 3000;
 app.use(express_1.default.json());

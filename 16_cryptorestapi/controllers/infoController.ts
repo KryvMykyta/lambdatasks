@@ -85,8 +85,8 @@ export async function getInfo(req: Request, res: Response) {
                     sum += Number(listing[key])
                 }
             }
-            if (keys.length === 7){
-                sum /= 5
+            if (keys.length === 6){
+                sum /= 4
             }
             resArray.push({
                 "currency": listing["currency"],

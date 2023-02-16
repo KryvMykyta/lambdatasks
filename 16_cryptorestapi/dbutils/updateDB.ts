@@ -8,7 +8,7 @@ dotenv.config({path:"../.env"})
 */
 
 
-function createDB(){
+export function createDB(){
     const connection = mysql.createConnection({
         host: process.env.HOST,
         user: process.env.DB_USER,
@@ -16,7 +16,6 @@ function createDB(){
     });
     connection.connect(function(err) {
         if (err) throw err;
-        console.log("Connected!");
     });
     connection.query("CREATE DATABASE IF NOT EXISTS crypto", function (err, result) {
         if (err) throw err;
@@ -25,7 +24,7 @@ function createDB(){
     connection.end()
 }
 
-function createTable(){
+export function createTable(){
     const connection = mysql.createConnection({
         host: process.env.HOST,
         user: process.env.DB_USER,
@@ -34,7 +33,6 @@ function createTable(){
     });
     connection.connect(function(err) {
         if (err) throw err;
-        console.log("Connected!");
     });
     const sql = [
         "CREATE TABLE IF NOT EXISTS exchanges (",
@@ -42,7 +40,7 @@ function createTable(){
         "kucoin VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinStats VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinBase VARCHAR(255) CHARACTER SET utf8mb4,",
-        "coinMarketCap VARCHAR(255) CHARACTER SET utf8mb4,",
+        // "coinMarketCap VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinPaprika VARCHAR(255) CHARACTER SET utf8mb4,",
         "time BIGINT",
         ")"
@@ -50,38 +48,38 @@ function createTable(){
     
     connection.query(sql, function (err, result) {
         if (err) throw err;
-        console.log("Database created");
+        console.log("table created");
     });
     connection.end()
 }
 
 
 export async function uploadData() {
-    createDB()
-    createTable()
-
     const connection = mysql.createConnection({
         host: process.env.HOST,
         user: process.env.DB_USER,
         database:"crypto",
         password: process.env.DB_PASS
     });
+    console.log("updating")
 
     connection.connect(function(err) {
-        if (err) throw err;
-        console.log("Connected!");
+        if (err) console.log(err);
+        
     });
-
+    console.log("connected");
     const time = new Date().getTime()
     const data = await getAllData()
+    
     let loadingData = []
     let currencies = Object.keys(data)
     for (let currency of currencies){
         let markets = data[currency]
-        let prices = [currency, markets["kucoinPrice"], markets["coinStatsPrice"], markets["coinBasePrice"], markets["marketCapPrice"], markets["paprikaPrice"], time]
+        let prices = [currency, markets["kucoinPrice"], markets["coinStatsPrice"], markets["coinBasePrice"], markets["paprikaPrice"], time]
         loadingData.push(prices)
     }
-    let sql = `INSERT INTO exchanges (currency, kucoin, coinStats, coinBase, coinMarketCap, coinPaprika, time) VALUES ?`
+    console.log("loading: \n",loadingData)
+    let sql = `INSERT INTO exchanges (currency, kucoin, coinStats, coinBase, coinPaprika, time) VALUES ?`
     connection.query(sql, [loadingData], function (err, result) {
         if (err) throw err;
         console.log("Number of records inserted: " + result.affectedRows);

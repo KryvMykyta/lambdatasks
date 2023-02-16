@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadData = void 0;
+exports.uploadData = exports.createTable = exports.createDB = void 0;
 const getAllData_1 = require("../getApisData/getAllData");
 const mysql_1 = __importDefault(require("mysql"));
 const dotenv = __importStar(require("dotenv"));
@@ -52,7 +52,6 @@ function createDB() {
     connection.connect(function (err) {
         if (err)
             throw err;
-        console.log("Connected!");
     });
     connection.query("CREATE DATABASE IF NOT EXISTS crypto", function (err, result) {
         if (err)
@@ -61,6 +60,7 @@ function createDB() {
     });
     connection.end();
 }
+exports.createDB = createDB;
 function createTable() {
     const connection = mysql_1.default.createConnection({
         host: process.env.HOST,
@@ -71,10 +71,9 @@ function createTable() {
     connection.connect(function (err) {
         if (err)
             throw err;
-        console.log("Connected!");
     });
     const sql = [
-        "CREATE TABLE IF NOT EXISTS exchanges (",
+        "CREATE TABLE IF NOT EXISTS exchanges1 (",
         "currency VARCHAR(255) CHARACTER SET utf8mb4,",
         "kucoin VARCHAR(255) CHARACTER SET utf8mb4,",
         "coinStats VARCHAR(255) CHARACTER SET utf8mb4,",
@@ -87,35 +86,36 @@ function createTable() {
     connection.query(sql, function (err, result) {
         if (err)
             throw err;
-        console.log("Database created");
+        console.log("table created");
     });
     connection.end();
 }
+exports.createTable = createTable;
 function uploadData() {
     return __awaiter(this, void 0, void 0, function* () {
-        createDB();
-        createTable();
         const connection = mysql_1.default.createConnection({
             host: process.env.HOST,
             user: process.env.DB_USER,
             database: "crypto",
             password: process.env.DB_PASS
         });
+        console.log("updating");
         connection.connect(function (err) {
             if (err)
-                throw err;
-            console.log("Connected!");
+                console.log(err);
         });
+        console.log("connected");
         const time = new Date().getTime();
         const data = yield (0, getAllData_1.getAllData)();
         let loadingData = [];
         let currencies = Object.keys(data);
         for (let currency of currencies) {
             let markets = data[currency];
-            let prices = [currency, markets["kucoinPrice"], markets["coinStatsPrice"], markets["coinBasePrice"], markets["marketCapPrice"], markets["paprikaPrice"], time];
+            let prices = [currency, markets["kucoinPrice"], markets["coinStatsPrice"], markets["coinBasePrice"], markets["paprikaPrice"], time];
             loadingData.push(prices);
         }
-        let sql = `INSERT INTO exchanges (currency, kucoin, coinStats, coinBase, coinMarketCap, coinPaprika, time) VALUES ?`;
+        console.log("loading: \n", loadingData);
+        let sql = `INSERT INTO exchanges1 (currency, kucoin, coinStats, coinBase, coinPaprika, time) VALUES ?`;
         connection.query(sql, [loadingData], function (err, result) {
             if (err)
                 throw err;
