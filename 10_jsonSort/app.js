@@ -7,26 +7,33 @@ function getLinks(filename){
     return JSON.parse(resData)
 }
 
-async function getInfo(endp){
-    let res = await axios.get(endp)
-    return res.data
+async function getInfo(endpoint){
+    let {data: endpointResponse} = await axios.get(endpoint)
+    return endpointResponse
 }
 
 function checkLevel(data){
-    if (data?.isDone !== undefined){
-        let isD = data?.isDone
-        return isD
+    if (data.isDone){
+        return data.isDone
     }
-    else{
-        let keys = Object.keys(data)
-        for (let element of keys){
-            if (typeof(data[element]) === typeof({})){
-                let res = checkLevel(data[element])
-                if (res !== undefined){
-                    return res
-                }
-                
-            }
+    const keys = Object.keys(data)
+
+    //realization with foreach i dont like
+
+    // let result = ""
+    // keys.forEach((key) => {
+    //     if (typeof(data[key]) === typeof({})){
+    //         const objectByKey = checkLevel(data[key])
+    //         if (objectByKey) result = objectByKey
+    //     }
+    // })
+    // return result
+
+
+    for (let key of keys){
+        if (typeof(data[key]) === typeof({})){
+            let objectByKey = checkLevel(data[key])
+            if (objectByKey) return objectByKey
         }
     }
 }
@@ -38,23 +45,22 @@ async function main(){
         return getInfo(link)
     }))
     let counter = {
-        "true": 0,
-        "false": 0
+        "trueCount": 0,
+        "falseCount": 0
     }
-    for (let el of data){
+    data.forEach((endpointResponse) =>{
         try{
-            if(checkLevel(el)) {
-                counter["true"]+=1
+            if(checkLevel(endpointResponse)) {
+                counter.trueCount+=1
             }
             else {
-                counter["false"]+=1
+                counter.falseCount+=1
             }
         }
         catch (err){
             console.log(el," is not accessable")
         }
-    }
-    
+    })
     console.log(counter)
 }
 

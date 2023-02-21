@@ -3,32 +3,31 @@ import axios from "axios";
 import dotenv from 'dotenv'
 dotenv.config()
 
+const IMAGE_REQUEST_URL = 'https://picsum.photos/200/300'
+const TOKEN = process.env.TOKEN;
+const bot = new TelegramBot(TOKEN, {polling: true});
 
-const token = process.env.TOKEN;
-const bot = new TelegramBot(token, {polling: true});
-
-function photo(user){
-    axios.get('https://picsum.photos/200/300')
-    .then(function (response) {
-        const url = response.request.res.responseUrl;
-        bot.sendPhoto(user.chat.id,url);
-        console.log(JSON.stringify(user.chat.id) + " asked for a photo ");
-    });
+const getPhotoURL = async () => {
+    const {request: {res: {responseUrl : photoUrl}}} = await axios.get(IMAGE_REQUEST_URL)
+    return photoUrl
 };
 
 bot.onText(/\/help/, (msg) => {
-    const chatId = msg.chat.id
-    bot.sendMessage(chatId, 'Bot will answer you with your messages or send random photo when you will send "/photo"')
+    const {id} = msg.chat
+    bot.sendMessage(id, 'Bot will answer you with your messages or send random photo when you will send "/photo"')
 });
 
-bot.onText(/\/photo/, (msg) =>{
-    photo(msg);
+bot.onText(/\/photo/, async (msg) =>{
+    const {chat: {id}} = msg
+    bot.sendPhoto(id, await getPhotoURL());
+    console.log(`${JSON.stringify(id)} asked for a photo `);
 });
 
 const commands = ["/photo","/help"]
-bot.on("message", function (msg) {
-    if (!commands.includes(msg.text)){
-        bot.sendMessage(msg.chat.id, 'You sent : '+ JSON.stringify(msg.text));
-        console.log(JSON.stringify(msg.from.id) + " sent : " + JSON.stringify(msg.text)); 
+bot.on("message", (msg) => {
+    const {text, chat: {id}} = msg
+    if (!commands.includes(text)){
+        bot.sendMessage(id, `You sent : ${JSON.stringify(text)}`);
+        console.log(`${JSON.stringify(id)} sent : ${JSON.stringify(text)}`); 
     }
 });

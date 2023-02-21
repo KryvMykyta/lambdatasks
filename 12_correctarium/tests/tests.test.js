@@ -1,4 +1,4 @@
-const info = require('./getdate.js')
+const info = require('../utils/getdate.js')
 
 test('Monday 18:00:00, 0.5hour', () => {
     let date = new Date('23 January 2023 18:00')

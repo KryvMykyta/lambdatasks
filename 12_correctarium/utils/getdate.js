@@ -72,7 +72,7 @@ function getPrice(data){
     return Math.floor(price)
 }
 
-function getTime(data){
+function getTimeNeeded(data){
     let time = 0
     //time in hours
     if (data.lan === "en"){
@@ -96,8 +96,21 @@ function getTime(data){
     return Math.round(time * 100) / 100
 }
 
+function getOrderDetails(requestBody){
+    const cost = getPrice(requestBody)
+    const time = getTimeNeeded(requestBody)
+    const date = getDeadline(new Date(),time*3600*1000)
+    return {
+        "price": cost,
+        "time": time,
+        "deadline":date.getTime(),
+        "deadline_date":date.toISOString()
+    }
+}
+
 module.exports = {
-    getDeadline,
-    getTime,
-    getPrice
+    getOrderDetails,
+    getPrice,
+    getTimeNeeded,
+    getDeadline
 }

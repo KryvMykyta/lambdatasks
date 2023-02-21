@@ -1,39 +1,35 @@
 import fs from 'fs';
 
-function createArray(fileName) {
-    let data = fs.readFileSync(fileName, {encoding : "utf-8"});
-    data = JSON.parse(data);
-    let arr = [];
-    for (let i = 0; i<data.length;i++){
-        if (!arr.includes(data[i]["user"]["_id"])) {
-            arr.push(data[i]["user"]["_id"]);
-        }
-    }
-    return arr;
+const getUniqueIds = (weekends) => {
+    const uniqueIds = Array.from(new Set(weekends.reduce(
+        (resultArray, weekendRecord) => [...resultArray, weekendRecord.user._id], 
+        []
+    )))
+    return uniqueIds
 }
 
-function reWork(fileOld,fileNew) {
-    let data = createArray(fileOld);
-    let old = fs.readFileSync(fileOld, {encoding : "utf-8"});
-    old = JSON.parse(old)
-    let newData = [];
-    let object = {};
-    for (let i = 0; i<data.length; i++) {
-        object = {};
-        let res = old.filter(item => { return item["user"]["_id"] == data[i]});
-        object["id"] = res[0]["user"]["_id"];
-        object["name"] = res[0]["user"]["name"];
-        let weekendDays = [];
-        for (let j = 0; j<res.length; j++){
-            weekendDays.push({"startDate":res[j]["startDate"], "endDate":res[j]["endDate"]});
-        }
-        object["weekends"] = weekendDays;
-        newData.push(object);
-    }
-    console.log(newData);
-    fs.writeFileSync(fileNew,JSON.stringify(newData, null, "\t"), (err) => {
-        console.error(err);
-    });
+
+const reformatJson = (oldFileName, newFileName) => {
+    const weekends = JSON.parse(fs.readFileSync(oldFileName, {encoding : "utf-8"}));
+    const uniqueIds = getUniqueIds(weekends)
+    let grouppedWeekends = []
+    uniqueIds.map((id) => {
+        const weekendRecordsOfUser = weekends.filter((weekendRecord) => id === weekendRecord.user._id)
+        const userName = weekendRecordsOfUser[0].user.name
+        let weekendsGroupped = []
+        weekendRecordsOfUser.map((weekendRecord) => {
+            weekendsGroupped.push({
+                startDate: weekendRecord.startDate,
+                endDate: weekendRecord.endDate,
+            })
+        })
+        grouppedWeekends.push({
+            _id: id,
+            name: userName,
+            weekends: weekendsGroupped
+        })
+    })
+    fs.writeFileSync(newFileName,JSON.stringify(grouppedWeekends, null, "\t"))
 }
 
-reWork("old.json","new.json");
+reformatJson("old.json","new.json")

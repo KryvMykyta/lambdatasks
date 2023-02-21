@@ -1,1 +1,1 @@
-[{"Name":"Nikita","Age":"13","Gender":"male"},{"Name":"Vova","Age":"15","Gender":"female"},{"Name":"Nikita","Age":"23","Gender":"female"},{"Name":"Kyryly","Age":"21","Gender":"male"},{"Name":"Pshenik","Age":"20","Gender":"female"}]
+[{"name":"Popa","age":"12","gender":"male"}]

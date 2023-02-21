@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { ApiError } = require('./ApiError.js')
+const { ApiError } = require('../Errors/ApiError.js')
 const {getUserByEmail, getUserById} = require('./dbutils.js')
 require('dotenv').config()
 
@@ -14,7 +14,7 @@ async function loginUser(req,res){
             res.status(406).send("Invalid credentials")
         }
         else{
-            let expiresAccess = Math.round(Math.random() * (60 - 30) + 30);
+            const expiresAccess = Math.round(Math.random() * (60 - 30) + 30);
             const accessToken = jwt.sign({"email":userCredentials.email}, secretKey, {
                 expiresIn: `${expiresAccess}s`
             });
@@ -32,19 +32,19 @@ async function loginUser(req,res){
 }
 
 async function refresh(req,res){
-    let body = req.headers.authorization
+    const body = req.headers.authorization
     console.log(req.headers)
     if (!body) {
         return res.status(400).send("Token not provided")
     }
-    let oldRefreshToken = body.split(" ")[1]
+    const oldRefreshToken = body.split(" ")[1]
     try {
         const decoded = jwt.verify(oldRefreshToken, secretKey)
         const user = await getUserById(decoded["_id"])
         console.log(user)
         if (!user) throw new ApiError(401, "Unauthorized")
-        let info = {"email":user.email}
-        let expires = Math.round(Math.random() * (60 - 30) + 30);
+        const info = {"email":user.email}
+        const expires = Math.round(Math.random() * (60 - 30) + 30);
         const accessToken = jwt.sign(info, secretKey, {
             expiresIn: `${expires}s`
         });
@@ -60,11 +60,11 @@ async function refresh(req,res){
 }
 
 function authVerify(req,res,next){
-    let body = req.headers.authorization
+    const body = req.headers.authorization
     if (!body) {
         return res.status(401).send("Token not provided")
     }
-    let token = body.split(" ")[1]
+    const token = body.split(" ")[1]
     try {
         req.user = jwt.verify(token,secretKey)
         if (!req.user.email) throw new ApiError(401,"Expired or invalid token")
@@ -78,7 +78,7 @@ function authVerify(req,res,next){
 
 async function getMe(req,res) {
     const request_num = req.params.num
-    let response = {
+    const response = {
         "request_num": request_num,
         "data": {
             "email": req.user.email

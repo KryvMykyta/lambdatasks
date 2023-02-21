@@ -1,8 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
-import axios from "axios";
-import { keyboards } from "./keyboards.js";
-import { getMessage } from "./forecasts.js";
-import { getUsd, getEur } from "./currencies.js";
+import { keyboards } from "./keyboards/keyboards.js";
+import { getMessageForecast } from "./utils/forecasts.js";
+import { getEurMessage, getUsdMessage } from "./utils/currencies.js";
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -30,21 +29,21 @@ bot.onText(/Currency exchange/, (msg) => {
 })
 
 bot.onText(/Every 3 hours/, async (msg) => {
-    let text = await getMessage(3)
+    const text = await getMessageForecast(3)
     bot.sendMessage(msg.chat.id, text, keyboards.weather);
 })
 
 bot.onText(/Every 6 hours/, async (msg) => {
-    let text = await getMessage(6)
+    const text = await getMessageForecast(6)
     bot.sendMessage(msg.chat.id, text, keyboards.weather);
 })
 
 bot.onText(/USD/, async (msg) => {
-    let text = await getUsd()
+    const text = await getUsdMessage()
     bot.sendMessage(msg.chat.id, text, keyboards.currency);
 })
 
 bot.onText(/EUR/, async (msg) => {
-    let text = await getEur()
+    const text = await getEurMessage()
     bot.sendMessage(msg.chat.id, text, keyboards.currency);
 })

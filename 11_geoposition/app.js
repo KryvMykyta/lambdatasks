@@ -1,5 +1,5 @@
 import express from "express";
-import { getCountryByIp } from "./getInfo.js";
+import { getCountryByIp } from "./utils/getInfo.js";
 
 const app = express()
 const PORT = 3000
@@ -7,14 +7,13 @@ app.use(express.json())
 
 app.get('/', (req,res) => {
     try{
-        if (req.query.ip !== undefined){
-            let ip = JSON.stringify(req.query.ip).replaceAll(`"`,"")
-            let country = getCountryByIp(ip)
+        if (req.query.ip){
+            const ip = JSON.stringify(req.query.ip).replaceAll(`"`,"")
+            const country = getCountryByIp(ip)
             return res.status(200).send({"ip": ip, "country":country.replace(`\r`,"")})
         }
-        let ip = req.headers['x-forwarded-for']
-        console.log(ip.toString())
-        let country = getCountryByIp(ip.toString())
+        const ip = req.headers['x-forwarded-for']
+        const country = getCountryByIp(ip.toString())
         return res.status(200).send({"ip": ip, "country":country.replace(`\r`,"")})
     } catch(err) {
         return res.status(500).send("Server error")

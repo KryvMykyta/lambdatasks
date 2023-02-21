@@ -11,15 +11,15 @@ const client = new MongoClient(uri);
 // const data = client.db("jsonbase").collection("data")
 
 export async function loadData(req: Request, res: Response){
-    const content : Object = req.body
-    const key = req.params.path
+    const {body} = req
+    const {path} = req.params
     try{ 
         await client.connect()
         const data = client.db("jsonbase").collection("data")
-        if (await data.findOne({"path": key}) === null ){
+        if (!await data.findOne({"path": path})){
             await data.insertOne({
-                "path": key,
-                "data": content
+                "path": path,
+                "data": body
             })
             client.close()
             return res.status(200).send("Data was succesfully written")
@@ -35,18 +35,18 @@ export async function loadData(req: Request, res: Response){
 
 
 export async function getData(req: Request, res: Response) {
-    const key = req.params.path
+    const {path} = req.params
     try{
         await client.connect()
         const data = client.db("jsonbase").collection("data")
-        let content = await data.findOne({"path": key})
-        if (content === null ){
+        const content = await data.findOne({"path": path})
+        if (!content){
             client.close()
             return res.status(404).send("Data wasnt found")
         }
         else { 
             client.close()
-            return res.status(200).send(content["data"])
+            return res.status(200).send(content.data)
         }
     } catch(err) {
         return res.status(500).send("Server error")

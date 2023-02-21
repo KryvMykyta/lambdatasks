@@ -1,7 +1,9 @@
 import { google } from "googleapis";
 import fs from 'fs';
+import { newFileName } from "./questions.js";
 
-export async function uploadFile(id,str,path){
+export const uploadFile =  async (id,path) => {
+    const fileName = await newFileName(path)
     try{
         const auth = new google.auth.GoogleAuth({
             keyFile: "keys.json",
@@ -10,7 +12,7 @@ export async function uploadFile(id,str,path){
         const driveService = google.drive({version: 'v3', auth})
 
         const fileData = {
-            name: str,
+            name: fileName,
             parents: [id]
         }
 
@@ -24,6 +26,7 @@ export async function uploadFile(id,str,path){
             field: 'id',
             resource: fileData
         })
+        console.log(response.data.id)
         return response.data.id
     }
     catch(err){

@@ -8,23 +8,23 @@ function union(setA, setB) {
     return _union;
 }
 
-function uniqueWords(fileName, alreadyExist) {
+function uniqueWords(fileName, alreadyExistInFiles) {
     let words = fs.readFileSync(fileName, { encoding: 'utf-8' }).split("\n");
-    let unique = new Set(words);
-    return union(alreadyExist, unique);
+    let uniqueFromFile = new Set(words);
+    return union(alreadyExistInFiles, uniqueFromFile);
 }
 
 function amountOfWords(fileName, wordsCount) {
-    let words = fs.readFileSync(fileName, { encoding: 'utf-8' }).split("\n");
-    let unique = new Set(words);
-    for (let item of unique) {
-        if (wordsCount.get(item) != undefined) {
-            wordsCount.set(item, wordsCount.get(item) + 1);
+    const words = fs.readFileSync(fileName, { encoding: 'utf-8' }).split("\n");
+    const uniqueWords = new Set(words);
+    Array.from(uniqueWords).map((word)=>{
+        if (wordsCount.get(word)) {
+            wordsCount.set(word, wordsCount.get(word) + 1);
         }
         else {
-            wordsCount.set(item, 1);
+            wordsCount.set(word, 1);
         }
-    };
+    })
     return wordsCount;
 }
 
@@ -48,37 +48,31 @@ function appearsIn10plusFiles(wordsCount) {
     return count;
 }
 
-function result(num) {
-    console.log("num = ",num);
-    console.time("total time : ")
+function main() {
+    console.time("Total time : ")
     let words = new Set();
     let wordsCounter = new Map();
     for (let i = 0; i < 20; i++) {
-        words = uniqueWords(`./files${num}/out${i}.txt`,words);
-        wordsCounter = amountOfWords(`./files${num}/out${i}.txt`, wordsCounter);
+        words = uniqueWords(`./files1/out${i}.txt`,words);
+        wordsCounter = amountOfWords(`./files1/out${i}.txt`, wordsCounter);
     }
 
-    console.time("unique time :")
-    console.log("unique words : " + words.size);
-    console.timeEnd("unique time :")
+    console.time("Time to get unique words :")
+    console.log("Unique words : " + words.size);
+    console.timeEnd("Time to get unique words :")
 
-    console.time("twenty - unique time :")
-    let inTwenty =  appearsIn20Files(wordsCounter);
-    console.timeEnd("twenty - unique time :")
-    console.log("in twenty files : " + inTwenty);
+    console.time("Time to get words that appears in 20 files:")
+    const inTwenty =  appearsIn20Files(wordsCounter);
+    console.timeEnd("Time to get words that appears in 20 files:")
+    console.log("Quantity of words that appears in 20 files:" + inTwenty);
     
 
-    console.time("more ten time:")
-    let inMoreTen = appearsIn10plusFiles(wordsCounter);
-    console.timeEnd("more ten time:")
-    console.log("more ten : " + inMoreTen);
+    console.time("Time to get words that appears in more than 10 files:")
+    const inMoreTen = appearsIn10plusFiles(wordsCounter);
+    console.timeEnd("Time to get words that appears in more than 10 files:")
+    console.log("Quantity of words that appears in more than 10 files : " + inMoreTen);
 
-    console.timeEnd("total time : ");
+    console.timeEnd("Total time : ");
 }
 
-function main() {
-    result("");
-    result("1");
-}
-
-main();
+main()

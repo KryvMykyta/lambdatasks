@@ -1,5 +1,5 @@
 import express from 'express'
-import {loadData, getData} from './dbutils.js'
+import {loadData, getData} from './utils/dbutils.js'
 
 const app = express()
 const PORT = 3000

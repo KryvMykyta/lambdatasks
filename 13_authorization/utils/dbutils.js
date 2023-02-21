@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
 const jwt = require('jsonwebtoken');
-const { ApiError } = require('./ApiError');
+const { ApiError } = require('../Errors/ApiError');
 
 require('dotenv').config()
 
@@ -15,7 +15,7 @@ async function createUser(req,res){
         await client.connect()
         console.log("connected")
         const users = client.db("authorization").collection("users")
-        let user = await users.findOne({"email":email})
+        const user = await users.findOne({"email":email})
         if (user) throw new ApiError(400, "User already exist")
         await users.insertOne({
             "email":email,
@@ -35,7 +35,7 @@ async function createUser(req,res){
 async function getUserByEmail(email){
     await client.connect()
     const users = client.db("authorization").collection("users")
-    let user = await users.findOne({"email":email})
+    const user = await users.findOne({"email":email})
     client.close()
     return user // null or user:{}
 
@@ -44,7 +44,7 @@ async function getUserByEmail(email){
 async function getUserById(id){
     await client.connect()
     const users = client.db("authorization").collection("users")
-    let user = await users.findOne({"_id":new ObjectId(id)})
+    const user = await users.findOne({"_id":new ObjectId(id)})
     client.close()
     return user // null or user:{}
 }

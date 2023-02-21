@@ -4,8 +4,7 @@ const DBNAME = "db.CSV"
 
 function getData(filename){
     const resData = fs.readFileSync(filename, 'utf8');
-    let data = resData.split("\n")
-    return data
+    return resData.split("\n")
 }
 
 function binarySearch(arr, target) {
@@ -28,16 +27,15 @@ function binarySearch(arr, target) {
 
 function ip4ToNum(ip){
     ip = ip.split(".")
-    let num = 16777216*Number(ip[0]) + 65536*Number(ip[1]) + 256*Number(ip[2]) + Number(ip[3])
-    return num
+    return 16777216*Number(ip[0]) + 65536*Number(ip[1]) + 256*Number(ip[2]) + Number(ip[3])
 }
 
 
-export function getCountryByIp(ip,filename){
-    let data = getData(DBNAME)
-    let dec = ip4ToNum(ip)
-    let index = binarySearch(data,dec)
-    let country = data[index].split(",")[3].replaceAll(`"`,"")
+export function getCountryByIp(ip){
+    const data = getData(DBNAME)
+    const dec = ip4ToNum(ip)
+    const index = binarySearch(data,dec)
+    const country = data[index].split(",")[3].replaceAll(`"`,"")
     return country
 }
 
