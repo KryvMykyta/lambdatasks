@@ -1,16 +1,15 @@
-import express from 'express'
-import {loadData, getData} from './utils/dbutils.js'
+import express from "express";
+import { uploadData, getData } from "./utils/dbutils.js";
 
-const app = express()
-const PORT = 3000
+const app = express();
+const PORT = 3000;
 
-app.use(express.json())
+app.use(express.json());
 
-app.post('/:path', loadData)
+app.post("/:path", uploadData);
 
-app.get('/:path',getData)
-
+app.get("/:path", getData);
 
 app.listen(PORT, () => {
-    console.log("started")
-})
+  console.log("started");
+});

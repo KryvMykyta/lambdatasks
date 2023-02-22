@@ -1,16 +1,15 @@
-import express from 'express'
-import { getData, loadData } from './utils/db_utils'
+import express from "express";
+import { getData, uploadData } from "./utils/db_utils";
 
-const app = express()
-const PORT = 3000
+const app = express();
+const PORT = 3000;
 
-app.use(express.json())
+app.use(express.json());
 
-app.post('/shortit', loadData)
+app.post("/shortit", uploadData);
 
-app.get('/:link', getData)
-
+app.get("/:link", getData);
 
 app.listen(PORT, () => {
-    console.log("started")
-})
+  console.log("started");
+});
