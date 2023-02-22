@@ -5,7 +5,7 @@ import { uploadData, createDB, createTable } from "./utils/updateDB";
 createDB();
 createTable();
 
-cron.schedule("*/1 * * * *", uploadData);
+cron.schedule("*/5 * * * *", uploadData);
 
 const app = express();
 
