@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { Batch, MongoClient } from "mongodb";
 import { Request, Response } from "express";
 import crypto from "crypto";
 
@@ -10,50 +10,45 @@ const client = new MongoClient(uri);
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000/";
 
-function createShortLink(link: string){
-  const shortedLink = `${crypto
-    .randomBytes(8)
-    .toString("hex")}`;
-  return shortedLink
+function createShortLink(link: string) {
+  const shortedLink = `${link}${crypto.randomBytes(8).toString("hex")}`;
+  return shortedLink;
 }
 
-export async function uploadData(
-  req: Request<{ link: string }>,
-  res: Response
-) {
-  const {
-    body: { link },
-  } = req;
-  
+export async function uploadData(link: string) {
   try {
     await client.connect();
     const data = client.db(process.env.DB_NAME).collection("routes");
-    if (!(await data.findOne({ link: link }))) {
-      let shortedLink = createShortLink(BASE_URL)
-      while(!await data.findOne({shorted_link: shortedLink})){
-        shortedLink = createShortLink(BASE_URL)
-      }
+    const foundData = await data.findOne({ link: link })
+    if (!foundData) {
+      let shortedLink = createShortLink(BASE_URL);
       await data.insertOne({
         link: link,
         shorted_link: shortedLink,
       });
       client.close();
-      return res.status(200).send({
-        shorted_link: shortedLink,
-      });
-    } else {
-      client.close();
-      return res.status(400).send("Link was already shortened");
+    return {
+      status: 200,
+      message: "success",
+      shortened_link: shortedLink,
+    };
     }
+    client.close();
+    return {
+      status: 400,
+      message: "Link was already shortened",
+      shortened_link: foundData.shorted_link,
+    };
   } catch (err) {
-    return res.status(500).send("Server error");
+    return {
+      status: 500,
+      message: "Server error",
+      shortened_link: "",
+    };
   }
 }
 
-export async function getData(req: Request<{ link: string }>, res: Response) {
-  const {
-    params: { link: route },
-  } = req;
+export async function getData(route: string) {
   const shortedLink = `${BASE_URL}${route}`;
   try {
     await client.connect();
@@ -61,12 +56,23 @@ export async function getData(req: Request<{ link: string }>, res: Response) {
     const content = await data.findOne({ shorted_link: shortedLink });
     if (!content) {
       client.close();
-      return res.status(404).send("Data wasnt found");
-    } else {
-      client.close();
-      return res.status(200).redirect(content.link);
+      return {
+        status: 404,
+        message: "Data wasnt found",
+        shortened_link: "",
+      };
     }
+    client.close();
+    return {
+      status: 200,
+      message: "success",
+      shortened_link: content.link,
+    };
   } catch (err) {
-    return res.status(500).send("Server error");
+    return {
+      status: 500,
+      message: "Server error",
+      shortened_link: "",
+    };
   }
 }

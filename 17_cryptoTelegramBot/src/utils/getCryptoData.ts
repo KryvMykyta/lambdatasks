@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 
 type coinSymbol = string;
+
 type currencyInfo = {
   currency: coinSymbol;
   price: number | string;
@@ -18,10 +19,10 @@ type timeInfo = {
   twentyFourHours: number | undefined;
 };
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000/";
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 async function getLatestData(coinSymbol: coinSymbol): Promise<currencyInfo> {
-  const url = `BASE_URL?currency=${coinSymbol}&time=300000`;
+  const url = `${BASE_URL}?currency=${coinSymbol}&time=300000`;
   const { data } = await axios.get(url);
   if (!data)
     return {
@@ -56,7 +57,7 @@ function formatListData(currenciesData: Array<currencyInfo>): string {
 
 async function getAllInfo(coinSymbol: string): Promise<timeInfo> {
   const timeOfOneDay = 24 * 60 * 60 * 1000;
-  const url = `http://18.159.129.159:3000?currency=${coinSymbol}&time=${timeOfOneDay}`;
+  const url = `${BASE_URL}?currency=${coinSymbol}&time=${timeOfOneDay}`;
   const { data: coinListings } = await axios.get(url);
   const timeStart = new Date().getTime();
   const coinPrices: timeInfo = {
@@ -95,8 +96,7 @@ async function getAllInfo(coinSymbol: string): Promise<timeInfo> {
     if (checkThreeHours) coinPrices.threeHours = Number(listing.price);
     if (checkSixHours) coinPrices.sixHours = Number(listing.price);
     if (checkTwelweHours) coinPrices.twelveHours = Number(listing.price);
-    if (checkTwentyFourHours)
-      coinPrices.twentyFourHours = Number(listing.price);
+    if (checkTwentyFourHours) coinPrices.twentyFourHours = Number(listing.price);
   });
   return coinPrices;
 }
@@ -121,9 +121,3 @@ export async function getMessageOfList(currenciesArr: Array<string>) {
   const coinsPrices = await getLatestDataFromArray(currenciesArr);
   return formatListData(coinsPrices);
 }
-
-async function main() {
-  getAllInfo("BTC");
-}
-
-main();

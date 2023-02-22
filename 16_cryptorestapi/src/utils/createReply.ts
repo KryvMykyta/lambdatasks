@@ -1,95 +1,78 @@
-import mysql from "mysql2";
 import dotenv from "dotenv";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
+import { exchanges, markets } from "../schemas/schemas";
+import { gte, eq, and } from "drizzle-orm/expressions";
 dotenv.config({ path: "../.env" });
 
-function getSqlQuery(time?: number, currency?: string, market?: string) {
-  if (!currency) {
-    if (!time) {
-      if (!market) {
-        // filter by none
-        return "SELECT * FROM exchanges";
-      }
-      // filter by market
-      return `SELECT currency, ${market}, time FROM exchanges`;
-    }
-    const timeNow = new Date().getTime();
-    const timeStart = timeNow - Number(time);
-    if (!market) {
-      // filter by time
-      return `SELECT * FROM exchanges WHERE time > ${timeStart}`;
-    }
-    // filter by market, time
-    return `SELECT currency, ${market}, time FROM exchanges WHERE time > ${timeStart}`;
-  }
-  if (!time) {
-    if (!market) {
-      // filter by currency
-      return `SELECT * FROM exchanges WHERE currency = '${currency}'`;
-    }
-    // filter by currency,market
-    return `SELECT currency, ${market}, time FROM exchanges WHERE currency = '${currency}'`;
-  }
-  const timeNow = new Date().getTime();
-  const timeStart = timeNow - Number(time);
-  if (!market) {
-    // filter by time, currency
-    return `SELECT * FROM exchanges WHERE currency = '${currency}' AND time > ${timeStart}`;
-  }
-  // filter by market, time, currency
-  return `SELECT currency, ${market}, time FROM exchanges WHERE currency = '${currency}' AND time > ${timeStart}`;
-}
-
-function createArrayCurrencyPrices(
-  currenciesListings: Array<{ [key: string]: string | number }>
-) {
-  const currenciesRates: Array<{ [key: string]: string | number }> = [];
-  currenciesListings.forEach((listing) => {
-    const listingParameters = Object.keys(listing);
-    let averagePrice = 0;
-    listingParameters.forEach((parameter) => {
-      if (parameter !== "time" && parameter !== "currency") {
-        averagePrice +=
-          Number(listing[parameter]) / (listingParameters.length - 2);
-      }
-    });
-    currenciesRates.push({
-      currency: listing["currency"],
-      price: averagePrice,
-      time: listing["time"],
-    });
-  });
-  return currenciesRates;
-}
-
-export function getReplyInfo(
+export async function getReplyInfo(
   time?: number,
   currency?: string,
-  market?: string
+  market?: markets
 ) {
-  const sqlQuery = getSqlQuery(time, currency, market);
-  const connection = mysql.createConnection({
+  const connection = await mysql.createConnection({
     host: process.env.HOST,
     user: process.env.DB_USER,
     database: "crypto",
     password: process.env.DB_PASS,
   });
-
-  connection.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
-
-  let replyInfo: Array<{ [key: string]: string | number }> = [];
-
-  connection.query(
-    sqlQuery,
-    function (
-      err: Error,
-      currenciesListings: Array<{ [key: string]: string | number }>
-    ) {
-      if (err) throw err;
-      replyInfo = createArrayCurrencyPrices(currenciesListings);
+  const db = drizzle(connection);
+  let listingsByCurrencyTime: {
+    currency: string;
+    kucoin: number;
+    coinStats: number;
+    coinBase: number;
+    coinPaprika: number;
+    time: number;
+  }[] = [];
+  if (!currency) {
+    if (!time) {
+      listingsByCurrencyTime = await db.select().from(exchanges);
+    } else {
+      const timeNow = new Date().getTime();
+      const timeStart = timeNow - time;
+      listingsByCurrencyTime = await db
+        .select()
+        .from(exchanges)
+        .where(gte(exchanges.time, timeStart));
     }
-  );
-  return replyInfo;
+  } else {
+    if (!time) {
+      listingsByCurrencyTime = await db.select().from(exchanges);
+    } else {
+      const timeNow = new Date().getTime();
+      const timeStart = timeNow - time;
+      listingsByCurrencyTime = await db
+        .select()
+        .from(exchanges)
+        .where(
+          and(gte(exchanges.time, timeStart), eq(exchanges.currency, currency))
+        );
+    }
+  }
+  let listingsByParameters : {
+    currency: string,
+    price: number,
+    time: number
+  }[] = [];
+  if(!market){
+    listingsByCurrencyTime.forEach((exchangeListing) => {
+      const averagePrice = (exchangeListing.coinBase + exchangeListing.coinPaprika + exchangeListing.coinStats + exchangeListing.kucoin) / 4
+      listingsByParameters.push({
+        currency: exchangeListing.currency,
+        price: averagePrice,
+        time: exchangeListing.time
+      })
+    })
+    return listingsByParameters
+  }
+  listingsByCurrencyTime.forEach((exchangeListing) => {
+    const averagePrice = exchangeListing[market]
+    listingsByParameters.push({
+      currency: exchangeListing.currency,
+      price: averagePrice,
+      time: exchangeListing.time
+    })
+  })
+  return listingsByParameters
 }
