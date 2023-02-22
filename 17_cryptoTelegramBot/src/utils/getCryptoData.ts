@@ -1,4 +1,6 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config({path: "../.env"})
 
 type coinSymbol = string;
 type currencyInfo = {
@@ -16,8 +18,10 @@ type timeInfo = {
   twentyFourHours: number | undefined;
 };
 
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000/";
+
 async function getLatestData(coinSymbol: coinSymbol): Promise<currencyInfo> {
-  const url = `http://18.159.129.159:3000?currency=${coinSymbol}&time=300000`;
+  const url = `BASE_URL?currency=${coinSymbol}&time=300000`;
   const { data } = await axios.get(url);
   if (!data)
     return {

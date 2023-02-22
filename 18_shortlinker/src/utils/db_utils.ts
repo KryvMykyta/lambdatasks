@@ -8,9 +8,7 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri);
 
-const BASE_URL = process.env.BASE_URL || "localhost";
-
-const PORT = process.env.PORT || 3000;
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000/";
 
 // const data = client.db("jsonbase").collection("data")
 
@@ -21,7 +19,7 @@ export async function uploadData(
   const {
     body: { link },
   } = req;
-  const shortedLink = `${BASE_URL}:${PORT}/${crypto
+  const shortedLink = `BASE_URL${crypto
     .randomBytes(8)
     .toString("hex")}`;
   try {
@@ -49,7 +47,7 @@ export async function getData(req: Request<{ link: string }>, res: Response) {
   const {
     params: { link: route },
   } = req;
-  const shortedLink = `${BASE_URL}:${PORT}/${route}`;
+  const shortedLink = `BASE_URL${route}`;
   try {
     await client.connect();
     const data = client.db(process.env.DB_NAME).collection("routes");
