@@ -13,8 +13,7 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-async function createUser(req, res) {
-  const { email, pass } = req.body;
+async function createUser(email, pass) {
   try {
     await client.connect();
     console.log("connected");
@@ -26,12 +25,21 @@ async function createUser(req, res) {
       pass: pass,
     });
     client.close();
-    return res.status(200).send("User succesfully created");
+    return {
+      status: 200,
+      message: "User succesfully created",
+    };
   } catch (err) {
     console.log(err);
     if (err instanceof ApiError)
-      return res.status(err.status).send(err.message);
-    return res.status(500).send("server error");
+      return {
+        status: err.status,
+        message: err.message,
+      };
+    return {
+      status: 500,
+      message: "server error",
+    };
   }
 }
 

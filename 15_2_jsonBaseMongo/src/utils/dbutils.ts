@@ -43,7 +43,7 @@ export async function getData(
     const foundData = await data.findOne({ path: path });
     if (!foundData) {
       client.close();
-      return res.status(404).send("Data wasnt found");
+      return res.status(404).send("Data wasn`t found");
     } else {
       client.close();
       return res.status(200).send(foundData.data);

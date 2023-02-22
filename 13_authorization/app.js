@@ -1,6 +1,6 @@
 const express = require("express");
-const { createUser } = require("./dbutils.js");
-const { loginUser, refresh, getMe, authVerify } = require("./tokens.js");
+const { login, signUp, refresh, getMe, authVerify } = require("./controllers/authControllers");
+
 
 const app = express();
 const PORT = 3000;
@@ -10,9 +10,9 @@ app.get("/me:num", authVerify, getMe);
 
 app.post("/refresh", refresh);
 
-app.post("/signup", createUser);
+app.post("/signup", signUp);
 
-app.post("/login", loginUser);
+app.post("/login", login);
 
 app.listen(PORT, () => {
   console.log("started");

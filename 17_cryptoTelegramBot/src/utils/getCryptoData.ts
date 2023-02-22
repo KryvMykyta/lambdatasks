@@ -1,6 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
-dotenv.config({path: "../.env"})
+dotenv.config({ path: "../.env" });
 
 type coinSymbol = string;
 type currencyInfo = {
@@ -70,23 +70,23 @@ async function getAllInfo(coinSymbol: string): Promise<timeInfo> {
   };
   coinListings.forEach((listing: currencyInfo) => {
     const period = timeStart - listing.time;
-    let checkLatest = period <= 5 * 60 * 1000;
-    let checkThirty =
+    const checkLatest = period <= 5 * 60 * 1000;
+    const checkThirty =
       period <= 30 * 60 * 1000 + 2.5 * 60 * 1000 &&
       period >= 30 * 60 * 1000 - 2.5 * 60 * 1000;
-    let checkHour =
+    const checkHour =
       period <= 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
       period >= 60 * 60 * 1000 - 2.5 * 60 * 1000;
-    let checkThreeHours =
+    const checkThreeHours =
       period <= 3 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
       period >= 3 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
-    let checkSixHours =
+    const checkSixHours =
       period <= 6 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
       period >= 6 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
-    let checkTwelweHours =
+    const checkTwelweHours =
       period <= 12 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
       period >= 12 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
-    let checkTwentyFourHours =
+    const checkTwentyFourHours =
       period <= 24 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
       period >= 24 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
     if (checkLatest) coinPrices.latest = Number(listing.price);

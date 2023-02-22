@@ -1,4 +1,4 @@
-import { getAllData } from "./getCoins";
+import { getAllData } from "./getCoinsData";
 import mysql from "mysql2";
 import * as dotenv from "dotenv";
 dotenv.config({ path: "../.env" });

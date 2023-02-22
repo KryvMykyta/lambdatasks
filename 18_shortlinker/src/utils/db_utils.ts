@@ -10,7 +10,12 @@ const client = new MongoClient(uri);
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000/";
 
-// const data = client.db("jsonbase").collection("data")
+function createShortLink(link: string){
+  const shortedLink = `${crypto
+    .randomBytes(8)
+    .toString("hex")}`;
+  return shortedLink
+}
 
 export async function uploadData(
   req: Request<{ link: string }>,
@@ -19,13 +24,15 @@ export async function uploadData(
   const {
     body: { link },
   } = req;
-  const shortedLink = `BASE_URL${crypto
-    .randomBytes(8)
-    .toString("hex")}`;
+  
   try {
     await client.connect();
     const data = client.db(process.env.DB_NAME).collection("routes");
     if (!(await data.findOne({ link: link }))) {
+      let shortedLink = createShortLink(BASE_URL)
+      while(!await data.findOne({shorted_link: shortedLink})){
+        shortedLink = createShortLink(BASE_URL)
+      }
       await data.insertOne({
         link: link,
         shorted_link: shortedLink,
@@ -36,7 +43,7 @@ export async function uploadData(
       });
     } else {
       client.close();
-      return res.status(400).send("Route already taken");
+      return res.status(400).send("Link was already shortened");
     }
   } catch (err) {
     return res.status(500).send("Server error");
@@ -47,7 +54,7 @@ export async function getData(req: Request<{ link: string }>, res: Response) {
   const {
     params: { link: route },
   } = req;
-  const shortedLink = `BASE_URL${route}`;
+  const shortedLink = `${BASE_URL}${route}`;
   try {
     await client.connect();
     const data = client.db(process.env.DB_NAME).collection("routes");

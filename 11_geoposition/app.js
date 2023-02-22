@@ -6,15 +6,16 @@ const PORT = 3000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
+  const {query: {ip}} = req
   try {
-    if (req.query.ip) {
-      const ip = JSON.stringify(req.query.ip).replaceAll(`"`, "");
+    if (ip) {
+      const ip = JSON.stringify(ip).replaceAll(`"`, "");
       const country = getCountryByIp(ip);
       return res
         .status(200)
         .send({ ip: ip, country: country.replace(`\r`, "") });
     }
-    const ip = req.headers["x-forwarded-for"];
+    const {headers: {'x-forwarder-for': ip}} = req
     const country = getCountryByIp(ip.toString());
     return res.status(200).send({ ip: ip, country: country.replace(`\r`, "") });
   } catch (err) {

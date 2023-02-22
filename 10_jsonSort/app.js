@@ -3,12 +3,12 @@ import fs from "fs";
 
 const LISTS = "list.txt";
 function getLinks(filename) {
-  let resData = fs.readFileSync(filename, "utf8");
+  const resData = fs.readFileSync(filename, "utf8");
   return JSON.parse(resData);
 }
 
 async function getInfo(endpoint) {
-  let { data: endpointResponse } = await axios.get(endpoint);
+  const { data: endpointResponse } = await axios.get(endpoint);
   return endpointResponse;
 }
 
@@ -31,7 +31,7 @@ function checkLevel(data) {
 
   for (let key of keys) {
     if (typeof data[key] === typeof {}) {
-      let objectByKey = checkLevel(data[key]);
+      const objectByKey = checkLevel(data[key]);
       if (objectByKey) return objectByKey;
     }
   }
