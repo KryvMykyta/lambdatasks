@@ -2,14 +2,15 @@ import {
     int,
     text,
     mysqlTable,
+    float
   } from 'drizzle-orm/mysql-core';
 
-export const exchanges = mysqlTable('exchanges', {
+export const exchanges = mysqlTable('exchange', {
     currency: text('currency').notNull(),
-    kucoin: int('kucoin').notNull(),
-    coinStats: int('coinStats').notNull(),
-    coinBase: int('coinBase').notNull(),
-    coinPaprika: int('coinPaprika').notNull(),
+    kucoin: float('kucoin').notNull(),
+    coinStats: float('coinStats').notNull(),
+    coinBase: float('coinBase').notNull(),
+    coinPaprika: float('coinPaprika').notNull(),
     time: int('time').notNull()
   });
 

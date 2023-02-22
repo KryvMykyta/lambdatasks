@@ -1,7 +1,7 @@
 import TelegramBot, { KeyboardButton } from "node-telegram-bot-api";
 import dotenv from "dotenv";
 import { createTable } from "./migration/createDB";
-import { getMessageOfFullData, getMessageOfList } from "./utils/getCryptoData";
+import { getMessageOfFullData, getMessageOfCoinsList } from "./utils/getCryptoData";
 import {
   addLastViewed,
   addToFavourite,
@@ -59,7 +59,7 @@ bot.onText(/\/listRecent/, async function (msg) {
   const {
     chat: { id },
   } = msg;
-  bot.sendMessage(id, await getMessageOfList(hypeCoins));
+  bot.sendMessage(id, await getMessageOfCoinsList(hypeCoins));
   updateLastViewed(id, "");
 });
 
@@ -83,14 +83,14 @@ bot.onText(/^\/[a-zA-Z0-9]{2,6}$/, async function (msg) {
   if (text !== "/start" && text !== "/help") {
     updateLastViewed(id, String(text).toUpperCase());
     const coinSymbol = msg.text?.toUpperCase().replace("/", "");
-    const callback = async (keyboard: any) => {
+    const messageSend = async (keyboard: any) => {
       bot.sendMessage(
         id,
         await getMessageOfFullData(String(coinSymbol)),
         keyboard
       );
     };
-    await checkInFavourite(id, String(coinSymbol), callback, message_id);
+    await checkInFavourite(id, String(coinSymbol), messageSend, message_id);
   }
 });
 

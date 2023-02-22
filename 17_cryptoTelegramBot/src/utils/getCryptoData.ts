@@ -23,17 +23,17 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 async function getLatestData(coinSymbol: coinSymbol): Promise<currencyInfo> {
   const url = `${BASE_URL}?currency=${coinSymbol}&time=300000`;
-  const { data } = await axios.get(url);
-  if (!data)
+  const { data: exchangeRecords } = await axios.get(url);
+  if (!exchangeRecords)
     return {
       currency: coinSymbol,
       price: "No data",
       time: new Date().getTime(),
     };
-  return data[0];
+  return exchangeRecords[0];
 }
 
-export async function getLatestDataFromArray(
+export async function getLatestDataFromCoinsArray(
   currencies: Array<coinSymbol>
 ): Promise<Array<currencyInfo>> {
   let currenciesPrices: Array<currencyInfo> = [];
@@ -71,25 +71,27 @@ async function getAllInfo(coinSymbol: string): Promise<timeInfo> {
   };
   coinListings.forEach((listing: currencyInfo) => {
     const period = timeStart - listing.time;
+    const thirtyMinutes = 30 * 60 * 1000
+    const step = 2.5*60*1000
     const checkLatest = period <= 5 * 60 * 1000;
     const checkThirty =
-      period <= 30 * 60 * 1000 + 2.5 * 60 * 1000 &&
-      period >= 30 * 60 * 1000 - 2.5 * 60 * 1000;
+      period <= thirtyMinutes + step &&
+      period >= thirtyMinutes - step;
     const checkHour =
-      period <= 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
-      period >= 60 * 60 * 1000 - 2.5 * 60 * 1000;
+      period <= 2*thirtyMinutes + step &&
+      period >= 2*thirtyMinutes - step;
     const checkThreeHours =
-      period <= 3 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
-      period >= 3 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
+      period <= 6*thirtyMinutes + step &&
+      period >= 6*thirtyMinutes - step;
     const checkSixHours =
-      period <= 6 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
-      period >= 6 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
+      period <= 12*thirtyMinutes + step &&
+      period >= 12*thirtyMinutes - step;
     const checkTwelweHours =
-      period <= 12 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
-      period >= 12 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
+      period <= 24*thirtyMinutes + step &&
+      period >= 24*thirtyMinutes - step;
     const checkTwentyFourHours =
-      period <= 24 * 60 * 60 * 1000 + 2.5 * 60 * 1000 &&
-      period >= 24 * 60 * 60 * 1000 - 2.5 * 60 * 1000;
+      period <= 48*thirtyMinutes + step &&
+      period >= 48*thirtyMinutes - step;
     if (checkLatest) coinPrices.latest = Number(listing.price);
     if (checkThirty) coinPrices.thirtyMinutes = Number(listing.price);
     if (checkHour) coinPrices.oneHour = Number(listing.price);
@@ -117,7 +119,7 @@ export async function getMessageOfFullData(currency: string) {
   return formatFullData(await getAllInfo(currency));
 }
 
-export async function getMessageOfList(currenciesArr: Array<string>) {
-  const coinsPrices = await getLatestDataFromArray(currenciesArr);
+export async function getMessageOfCoinsList(currenciesArr: Array<string>) {
+  const coinsPrices = await getLatestDataFromCoinsArray(currenciesArr);
   return formatListData(coinsPrices);
 }

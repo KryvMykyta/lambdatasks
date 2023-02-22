@@ -2,7 +2,7 @@ import {
   addKeyboardOptions,
   deleteKeyboardOptions,
 } from "./../keyboards/keyboards";
-import { getMessageOfList } from "./getCryptoData";
+import { getMessageOfCoinsList } from "./getCryptoData";
 
 const sqlite3 = require("sqlite3").verbose();
 
@@ -22,7 +22,7 @@ export async function sendFavourite(
       callback("You have empty list of favourites");
       return 0;
     }
-    const data = await getMessageOfList(userData.favourite.split(","));
+    const data = await getMessageOfCoinsList(userData.favourite.split(","));
     callback(data);
   });
   db.close();

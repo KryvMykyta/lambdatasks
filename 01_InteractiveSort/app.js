@@ -27,37 +27,37 @@ const getWords = (arr) => {
 
 const inputWords = () => {
   rl.question("Enter words: ", (words) => {
-    const arr = words.split(" ");
-    console.log(arr);
+    const wordsArray = words.split(" ");
+    console.log(wordsArray);
     function askMethod() {
       rl.question(question, (func) => {
         switch (func) {
           case "exit":
             process.exit(0);
           case "1":
-            console.log(getWords(arr).sort());
+            console.log(getWords(wordsArray).sort());
             askMethod();
             break;
           case "2":
-            const increasing = getNumbers(arr).sort((a, b) => a - b);
+            const increasing = getNumbers(wordsArray).sort((a, b) => a - b);
             console.log(increasing);
             askMethod();
             break;
           case "3":
-            const decreasing = getNumbers(arr).sort((a, b) => b - a);
+            const decreasing = getNumbers(wordsArray).sort((a, b) => b - a);
             console.log(decreasing);
             askMethod();
             break;
           case "4":
-            console.log(getWords(arr).sort((a, b) => a.length - b.length));
+            console.log(getWords(wordsArray).sort((a, b) => a.length - b.length));
             askMethod();
             break;
           case "5":
-            console.log(Array.from(new Set(getWords(arr))));
+            console.log(Array.from(new Set(getWords(wordsArray))));
             askMethod();
             break;
           case "6":
-            console.log(Array.from(new Set(arr)));
+            console.log(Array.from(new Set(wordsArray)));
             askMethod();
             break;
           default:

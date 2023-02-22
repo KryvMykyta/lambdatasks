@@ -21,7 +21,7 @@ export async function uploadData(link: string) {
     const data = client.db(process.env.DB_NAME).collection("routes");
     const foundData = await data.findOne({ link: link })
     if (!foundData) {
-      let shortedLink = createShortLink(BASE_URL);
+      const shortedLink = createShortLink(BASE_URL);
       await data.insertOne({
         link: link,
         shorted_link: shortedLink,

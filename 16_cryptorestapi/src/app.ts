@@ -1,11 +1,9 @@
 import express from "express";
 import cron from "node-cron";
 import { getInfo } from "./controllers/infoController";
-import { uploadData, createDB, createTable } from "./utils/updateDB";
-createDB();
-createTable();
+import { uploadData } from "./utils/updateDB";
 
-cron.schedule("*/5 * * * *", uploadData);
+cron.schedule("*/1 * * * *", uploadData);
 
 const app = express();
 

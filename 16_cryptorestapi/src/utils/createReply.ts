@@ -5,6 +5,15 @@ import { exchanges, markets } from "../schemas/schemas";
 import { gte, eq, and } from "drizzle-orm/expressions";
 dotenv.config({ path: "../.env" });
 
+type CurrencyRecord = {
+  currency: string;
+  kucoin: number;
+  coinStats: number;
+  coinBase: number;
+  coinPaprika: number;
+  time: number;
+};
+
 export async function getReplyInfo(
   time?: number,
   currency?: string,
@@ -17,14 +26,7 @@ export async function getReplyInfo(
     password: process.env.DB_PASS,
   });
   const db = drizzle(connection);
-  let listingsByCurrencyTime: {
-    currency: string;
-    kucoin: number;
-    coinStats: number;
-    coinBase: number;
-    coinPaprika: number;
-    time: number;
-  }[] = [];
+  let listingsByCurrencyTime: CurrencyRecord[] = [];
   if (!currency) {
     if (!time) {
       listingsByCurrencyTime = await db.select().from(exchanges);
@@ -50,29 +52,34 @@ export async function getReplyInfo(
         );
     }
   }
-  let listingsByParameters : {
-    currency: string,
-    price: number,
-    time: number
+  let listingsByParameters: {
+    currency: string;
+    price: number;
+    time: number;
   }[] = [];
-  if(!market){
+  if (!market) {
     listingsByCurrencyTime.forEach((exchangeListing) => {
-      const averagePrice = (exchangeListing.coinBase + exchangeListing.coinPaprika + exchangeListing.coinStats + exchangeListing.kucoin) / 4
+      const averagePrice =
+        (exchangeListing.coinBase +
+          exchangeListing.coinPaprika +
+          exchangeListing.coinStats +
+          exchangeListing.kucoin) /
+        4;
       listingsByParameters.push({
         currency: exchangeListing.currency,
         price: averagePrice,
-        time: exchangeListing.time
-      })
-    })
-    return listingsByParameters
+        time: exchangeListing.time,
+      });
+    });
+    return listingsByParameters;
   }
   listingsByCurrencyTime.forEach((exchangeListing) => {
-    const averagePrice = exchangeListing[market]
+    const averagePrice = exchangeListing[market];
     listingsByParameters.push({
       currency: exchangeListing.currency,
       price: averagePrice,
-      time: exchangeListing.time
-    })
-  })
-  return listingsByParameters
+      time: exchangeListing.time,
+    });
+  });
+  return listingsByParameters;
 }
