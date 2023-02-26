@@ -6,7 +6,7 @@ dotenv.config();
 
 const FOLDER_ID = process.env.FOLDER_ID;
 
-async function main() {
+const main = async () =>  {
   const path = await askPath();
   const photoID = await uploadFile(FOLDER_ID, path);
   const confirmShortingLink = await confirmShortLink();

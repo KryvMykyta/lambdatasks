@@ -2,17 +2,17 @@ import axios from "axios";
 import fs from "fs";
 
 const LISTS = "list.txt";
-function getLinks(filename) {
+const getLinks = (filename) => {
   const resData = fs.readFileSync(filename, "utf8");
   return JSON.parse(resData);
 }
 
-async function getInfo(endpoint) {
+const getInfo = async (endpoint) => {
   const { data: endpointResponse } = await axios.get(endpoint);
   return endpointResponse;
 }
 
-function checkLevel(data) {
+const checkLevel = (data) => {
   if (data.isDone) {
     return data.isDone;
   }
@@ -37,7 +37,7 @@ function checkLevel(data) {
   }
 }
 
-async function main() {
+const main = async () =>  {
   const endpoints = getLinks(LISTS);
   const data = await Promise.all(
     endpoints.map(async (endpoint) => {

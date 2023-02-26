@@ -7,15 +7,15 @@ const MONO_API_URL = "https://api.monobank.ua/bank/currency";
 const PRIVAT_API_URL =
   "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5";
 
-function getData(filename) {
+const getData = (filename) => {
   return JSON.parse(fs.readFileSync(filename, "utf8"));
 }
 
-function loadData(filename, content) {
+const loadData = (filename, content) => {
   fs.writeFileSync(filename, JSON.stringify(content), "utf8");
 }
 
-async function getMono() {
+const getMono = async() => {
   const { data: currenciesInfo } = await axios.get(MONO_API_URL);
   let currencyRates = {};
   currenciesInfo.forEach((currencyInfo) => {
@@ -37,7 +37,7 @@ async function getMono() {
   return currencyRates;
 }
 
-async function getPrivat() {
+const getPrivat = async () => {
   const { data: currenciesInfo } = await axios.get(PRIVAT_API_URL);
   let currencyRates = {};
   currenciesInfo.forEach((currencyInfo) => {
@@ -53,7 +53,7 @@ async function getPrivat() {
   return currencyRates;
 }
 
-async function getExchange() {
+const getExchange = async () => {
   try {
     let exchangeRates = {};
     let privatRates = await getPrivat();
@@ -67,14 +67,14 @@ async function getExchange() {
   }
 }
 
-export async function getUsdMessage() {
+export const getUsdMessage = async () => {
   const { monoUsdSell, monoUsdBuy, privatUsdSell, privatUsdBuy } =
     await getExchange();
   const messageString = `MonoBank : USD/UAH Sell:${monoUsdSell}, Buy: ${monoUsdBuy}\nPrivatBank: USD/UAH Sell:${privatUsdSell}, Buy: ${privatUsdBuy}`;
   return messageString;
 }
 
-export async function getEurMessage() {
+export const getEurMessage = async () =>  {
   const { monoEurSell, monoEurBuy, privatEurSell, privatEurBuy } =
     await getExchange();
   const messageString = `MonoBank : EUR/UAH Sell:${monoEurSell}, Buy: ${monoEurBuy}\nPrivatBank: EUR/UAH Sell:${privatEurSell}, Buy: ${privatEurBuy}`;

@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const secretKey = process.env.SECRET;
 
-async function loginUser(email, pass) {
+const loginUser = async (email, pass) => {
   try {
     const userCredentials = await getUserByEmail(email);
 
@@ -47,10 +47,9 @@ async function loginUser(email, pass) {
   }
 }
 
-async function refreshToken(req, res) {
-  const body = req.headers.authorization;
-  console.log(req.headers);
-  if (!body) {
+const refreshToken = async (oldRefreshToken) => {
+  console.log(oldRefreshToken)
+  if (!oldRefreshToken) {
     return {
       status: 400,
       message: "Token not provided",
@@ -58,10 +57,10 @@ async function refreshToken(req, res) {
       refreshToken: "",
     };
   }
-  const oldRefreshToken = body.split(" ")[1];
   try {
     const decoded = jwt.verify(oldRefreshToken, secretKey);
     const user = await getUserById(decoded["_id"]);
+    console.log("user",user)
     console.log(user);
     if (!user) throw new ApiError(401, "Unauthorized");
     const info = { email: user.email };
@@ -79,14 +78,20 @@ async function refreshToken(req, res) {
       refreshToken: refreshToken,
     };
   } catch (err) {
-    console.log(err.message);
-    if (err instanceof ApiError)
+    if (err instanceof ApiError){
       return {
         status: err.status,
         message: err.message,
         accessToken: "",
         refreshToken: "",
       };
+    }
+    return {
+      status: 401,
+      message: "Expired or invalid token",
+      accessToken: "",
+      refreshToken: "",
+    };
   }
 }
 

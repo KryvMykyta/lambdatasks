@@ -7,10 +7,10 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri);
 
-export async function uploadData(
+export const uploadData = async (
   req: Request<{ path: string }, {}, { [key: string]: any }, {}>,
   res: Response<string>
-) {
+) => {
   const { body } = req;
   const { path } = req.params;
   try {
@@ -32,10 +32,10 @@ export async function uploadData(
   }
 }
 
-export async function getData(
+export const getData = async (
   req: Request<{ path: string }>,
   res: Response<string | { [key: string]: any }>
-) {
+) => {
   const { path } = req.params;
   try {
     await client.connect();

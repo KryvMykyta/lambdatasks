@@ -6,7 +6,7 @@ dotenv.config({ path: "../.env" });
 
 
 
-export async function getInfo(
+export const getInfo = async (
   req: Request<
     {},
     {},
@@ -14,7 +14,7 @@ export async function getInfo(
     { time?: number; currency?: string; market?: markets}
   >,
   res: Response
-) {
+) => {
   const { time, currency, market } = req.query;
   return res.status(200).send(await getReplyInfo(time, currency, market));
 }

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const URL = `https://api.openweathermap.org/data/2.5/forecast?lat=50.450001&lon=30.523333&units=metric&appid=4a27331c96310083697f644cad62c3f5`;
 
-async function getData(URL) {
+const getData = async (URL) =>  {
   try {
     const { data } = await axios.get(URL);
     return data;
@@ -12,7 +12,7 @@ async function getData(URL) {
   }
 }
 
-function getDayString(dateString) {
+const getDayString = (dateString) => {
   const daysName = [
     "Sunday",
     "Monday",
@@ -44,7 +44,7 @@ function getDayString(dateString) {
   return dateFormatString;
 }
 
-function formatForecastsData(forecasts, period) {
+const formatForecastsData = (forecasts, period) => {
   let uniqueDateStrings = [];
 
   forecasts.forEach((forecast) => {
@@ -79,7 +79,7 @@ function formatForecastsData(forecasts, period) {
   return forecastsPerDate;
 }
 
-function logWeather(forecastsData) {
+const logWeather = (forecastsData) => {
   let messageString = `Forecast for Kyiv\n`;
 
   const dates = Object.keys(forecastsData);
@@ -96,11 +96,11 @@ function logWeather(forecastsData) {
   return messageString;
 }
 
-function getHoursByDateString(dateString) {
+const getHoursByDateString = (dateString) => {
   return new Date(dateString).getHours();
 }
 
-export async function getMessageForecast(period) {
+export const getMessageForecast = async (period) =>  {
   const { list: forecasts } = await getData(URL);
   return logWeather(formatForecastsData(forecasts, period));
 }

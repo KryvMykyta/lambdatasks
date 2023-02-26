@@ -1,6 +1,6 @@
 import fs from "fs";
 
-function union(setA, setB) {
+const union = (setA, setB) => {
   var _union = new Set(setA);
   for (var elem of setB) {
     _union.add(elem);
@@ -8,13 +8,13 @@ function union(setA, setB) {
   return _union;
 }
 
-function uniqueWords(fileName, alreadyExistInFiles) {
-  let words = fs.readFileSync(fileName, { encoding: "utf-8" }).split("\n");
-  let uniqueFromFile = new Set(words);
+const uniqueWords = (fileName, alreadyExistInFiles) => {
+  const words = fs.readFileSync(fileName, { encoding: "utf-8" }).split("\n");
+  const uniqueFromFile = new Set(words);
   return union(alreadyExistInFiles, uniqueFromFile);
 }
 
-function amountOfWords(fileName, wordsCount) {
+const amountOfWords = (fileName, wordsCount) => {
   const words = fs.readFileSync(fileName, { encoding: "utf-8" }).split("\n");
   const uniqueWords = new Set(words);
   Array.from(uniqueWords).map((word) => {
@@ -27,7 +27,7 @@ function amountOfWords(fileName, wordsCount) {
   return wordsCount;
 }
 
-function appearsIn20Files(wordsCount) {
+const appearsIn20Files = (wordsCount) => {
   let count = 0;
   for (const [key, value] of wordsCount) {
     if (value === 20) {
@@ -37,7 +37,7 @@ function appearsIn20Files(wordsCount) {
   return count;
 }
 
-function appearsIn10plusFiles(wordsCount) {
+const appearsIn10plusFiles = (wordsCount) => {
   let count = 0;
   for (const [key, value] of wordsCount) {
     if (value >= 10) {
@@ -47,7 +47,7 @@ function appearsIn10plusFiles(wordsCount) {
   return count;
 }
 
-function main() {
+const main = () => {
   console.time("Total time : ");
   let words = new Set();
   let wordsCounter = new Map();

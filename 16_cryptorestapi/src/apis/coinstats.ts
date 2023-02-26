@@ -2,7 +2,7 @@ import axios from "axios";
 require("dotenv").config();
 
 const URL = "https://api.coinstats.app/public/v1/coins?skip=0&limit=500";
-export async function getCoinStats(): Promise<{ [key: string]: number }> {
+export const getCoinStats = async (): Promise<{ [key: string]: number }> => {
   const {
     data: { coins: listings },
   } = await axios.get(URL);

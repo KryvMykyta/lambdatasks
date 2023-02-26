@@ -12,7 +12,6 @@ import {
   sendFavourite,
   updateLastViewed,
 } from "./utils/dbUtils";
-const sqlite3 = require("sqlite3").verbose();
 dotenv.config();
 
 createTable();

@@ -1,16 +1,16 @@
-function setNextDay(date) {
+const setNextDay = (date) => {
   date.setHours(12);
   date.setMinutes(0);
   date.setSeconds(0);
 }
 
-function setDayEnd(date) {
+const setDayEnd = (date) => {
   date.setHours(19);
   date.setMinutes(0);
   date.setSeconds(0);
 }
 
-function getDeadline(deadline, time) {
+const getDeadline = (deadline, time) => {
   while (time !== 0) {
     if (deadline.getDay() == 6 || deadline.getDay() == 7) {
       deadline.setDate(deadline.getDate() + 7 - deadline.getDay() + 1);
@@ -42,7 +42,7 @@ function getDeadline(deadline, time) {
   }
 }
 
-function getPrice(data) {
+const getPrice = (data) => {
   let price = 0;
   if (data.lan === "en") {
     price = data.count * 0.12;
@@ -64,7 +64,7 @@ function getPrice(data) {
   return Math.floor(price);
 }
 
-function getTimeNeeded(data) {
+const getTimeNeeded = (data) => {
   let time = 0;
   //time in hours
   if (data.lan === "en") {
@@ -87,7 +87,7 @@ function getTimeNeeded(data) {
   return Math.round(time * 100) / 100;
 }
 
-function getOrderDetails(requestBody) {
+const getOrderDetails = (requestBody) => {
   const cost = getPrice(requestBody);
   const time = getTimeNeeded(requestBody);
   const date = getDeadline(new Date(), time * 3600 * 1000);

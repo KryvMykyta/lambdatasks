@@ -1,6 +1,6 @@
 const sqlite3 = require("sqlite3").verbose();
 
-export function createTable() {
+export const createTable = () => {
   console.log("created DB");
   const db = new sqlite3.Database(`./usersDb.db`);
   db.run(

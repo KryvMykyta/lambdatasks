@@ -1,10 +1,10 @@
 import { getData, uploadData } from "../utils/db_utils";
 import { Request, Response } from "express";
 
-export async function uploadController(
+export const uploadController = async (
   req: Request<{ link: string }>,
   res: Response
-) {
+) => {
   const {
     body: { link },
   } = req;
@@ -14,10 +14,10 @@ export async function uploadController(
   return res.status(responseData.status).send(responseData);
 }
 
-export async function getLinkController(
+export const getLinkController = async (
   req: Request<{ link: string }>,
   res: Response
-) {
+) => {
   const {
     params: { link: route },
   } = req;

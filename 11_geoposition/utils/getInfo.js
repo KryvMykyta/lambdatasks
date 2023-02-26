@@ -2,12 +2,12 @@ import fs from "fs";
 
 const DBNAME = "db.CSV";
 
-function getData(filename) {
+const getData = (filename) => {
   const ipRanges = fs.readFileSync(filename, "utf8");
   return ipRanges.split("\n");
 }
 
-function binarySearch(arr, target) {
+const binarySearch = (arr, target) => {
   let left = 0;
   let right = arr.length - 1;
   let result = -1;
@@ -24,7 +24,7 @@ function binarySearch(arr, target) {
   return result;
 }
 
-function ip4ToNum(ip) {
+const ip4ToNum = (ip) => {
   const ipParameters = ip.split(".");
   return (
     16777216 * Number(ipParameters[0]) +
@@ -34,10 +34,10 @@ function ip4ToNum(ip) {
   );
 }
 
-export function getCountryByIp(ip) {
+export const getCountryByIp = (ip) => {
   const data = getData(DBNAME);
-  const dec = ip4ToNum(ip);
-  const index = binarySearch(data, dec);
-  const country = data[index].split(",")[3].replaceAll(`"`, "");
+  const decimalIp = ip4ToNum(ip);
+  const indexOfRange = binarySearch(data, decimalIp);
+  const country = data[indexOfRange].split(",")[3].replaceAll(`"`, "");
   return country;
 }

@@ -2,9 +2,9 @@ import { getCoinBase } from "../apis/coinbase";
 import { getPaprika } from "../apis/coinpaprika";
 import { getKucoin } from "../apis/kucoin";
 import { getCoinStats } from "../apis/coinstats";
-export async function getAllData(): Promise<{
+export const getAllData = async (): Promise<{
   [key: string]: { [key: string]: number };
-}> {
+}> => {
   const paprika = await getPaprika();
   const coinBase = await getCoinBase();
   const kucoin = await getKucoin();

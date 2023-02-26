@@ -14,11 +14,11 @@ type CurrencyRecord = {
   time: number;
 };
 
-export async function getReplyInfo(
+export const getReplyInfo = async (
   time?: number,
   currency?: string,
   market?: markets
-) {
+) => {
   const connection = await mysql.createConnection({
     host: process.env.HOST,
     user: process.env.DB_USER,

@@ -14,7 +14,7 @@ type CurrencyRecord = {
   time: number;
 };
 
-export async function uploadData() {
+export const uploadData = async () => {
   const connection = await mysql.createConnection({
     host: process.env.HOST,
     user: process.env.DB_USER,

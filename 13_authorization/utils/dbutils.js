@@ -13,7 +13,7 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-async function createUser(email, pass) {
+const createUser = async (email, pass) => {
   try {
     await client.connect();
     console.log("connected");
@@ -43,7 +43,7 @@ async function createUser(email, pass) {
   }
 }
 
-async function getUserByEmail(email) {
+const getUserByEmail = async (email) => {
   await client.connect();
   const users = client.db("authorization").collection("users");
   const user = await users.findOne({ email: email });
@@ -51,7 +51,7 @@ async function getUserByEmail(email) {
   return user; // null or user:{}
 }
 
-async function getUserById(id) {
+const getUserById = async (id) => {
   await client.connect();
   const users = client.db("authorization").collection("users");
   const user = await users.findOne({ _id: new ObjectId(id) });

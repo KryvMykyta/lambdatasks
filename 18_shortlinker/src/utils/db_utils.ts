@@ -10,12 +10,12 @@ const client = new MongoClient(uri);
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000/";
 
-function createShortLink(link: string) {
+const createShortLink = (link: string) => {
   const shortedLink = `${link}${crypto.randomBytes(8).toString("hex")}`;
   return shortedLink;
 }
 
-export async function uploadData(link: string) {
+export const uploadData = async (link: string) => {
   try {
     await client.connect();
     const data = client.db(process.env.DB_NAME).collection("routes");
@@ -48,7 +48,7 @@ export async function uploadData(link: string) {
   }
 }
 
-export async function getData(route: string) {
+export const getData = async (route: string) => {
   const shortedLink = `${BASE_URL}${route}`;
   try {
     await client.connect();
