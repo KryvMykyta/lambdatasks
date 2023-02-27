@@ -6,18 +6,20 @@ const PORT = 3000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  const {query: {ip}} = req
   try {
+    const {query: {ip}} = req
     if (ip) {
-      const ip = JSON.stringify(ip).replaceAll(`"`, "");
-      const country = getCountryByIp(ip);
+      const formattedIp = JSON.stringify(ip).replaceAll(`"`, "");
+      const country = getCountryByIp(formattedIp);
       return res
         .status(200)
-        .send({ ip: ip, country: country.replace(`\r`, "") });
+        .send({ ip: formattedIp, country: country.replace(`\r`, "") });
     }
-    const {headers: {'x-forwarder-for': ip}} = req
-    const country = getCountryByIp(ip.toString());
-    return res.status(200).send({ ip: ip, country: country.replace(`\r`, "") });
+    else {
+      const {headers: {'x-forwarded-for': ip}} = req
+      const country = getCountryByIp(ip.toString());
+      return res.status(200).send({ ip: ip, country: country.replace(`\r`, "") });
+    }
   } catch (err) {
     return res.status(500).send("Server error");
   }

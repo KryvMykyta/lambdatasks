@@ -1,8 +1,9 @@
 import { exchanges } from "../schemas/schemas";
 import { getAllData } from "./getCoinsData";
-import mysql from "mysql2/promise";
+import { gte, lte, eq, and } from "drizzle-orm/expressions";
+import { Pool } from 'pg';
 import * as dotenv from "dotenv";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from 'drizzle-orm/node-postgres';
 dotenv.config({ path: "../.env" });
 
 type CurrencyRecord = {
@@ -15,13 +16,12 @@ type CurrencyRecord = {
 };
 
 export const uploadData = async () => {
-  const connection = await mysql.createConnection({
-    host: process.env.HOST,
-    user: process.env.DB_USER,
-    database: "crypto",
-    password: process.env.DB_PASS,
+  console.log("started connect")
+  const pool = new Pool({
+    connectionString: process.env.DB_CONN_STRING,
   });
-  const db = drizzle(connection);
+
+  const db = drizzle(pool);
 
   const time = new Date().getTime();
   const currenciesRates = await getAllData();
@@ -40,5 +40,8 @@ export const uploadData = async () => {
     });
 
   });
+  console.log("trying load")
   await db.insert(exchanges).values(...uploadingData)
+  const twoDayAgoTime = new Date().getTime() - 2*24*60*60*1000
+  await db.delete(exchanges).where(lte(exchanges.time,twoDayAgoTime))
 }

@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
 import { exchanges, markets } from "../schemas/schemas";
-import { gte, eq, and } from "drizzle-orm/expressions";
+import { gte, lte, eq, and } from "drizzle-orm/expressions";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 dotenv.config({ path: "../.env" });
 
 type CurrencyRecord = {
@@ -19,18 +19,19 @@ export const getReplyInfo = async (
   currency?: string,
   market?: markets
 ) => {
-  const connection = await mysql.createConnection({
-    host: process.env.HOST,
-    user: process.env.DB_USER,
-    database: "crypto",
-    password: process.env.DB_PASS,
+  const pool = new Pool({
+    connectionString: process.env.DB_CONN_STRING,
   });
-  const db = drizzle(connection);
+
+  const db = drizzle(pool);
+
   let listingsByCurrencyTime: CurrencyRecord[] = [];
   if (!currency) {
     if (!time) {
+      console.log("any")
       listingsByCurrencyTime = await db.select().from(exchanges);
     } else {
+      console.log("time")
       const timeNow = new Date().getTime();
       const timeStart = timeNow - time;
       listingsByCurrencyTime = await db
@@ -40,8 +41,10 @@ export const getReplyInfo = async (
     }
   } else {
     if (!time) {
-      listingsByCurrencyTime = await db.select().from(exchanges);
+      console.log("currency")
+      listingsByCurrencyTime = await db.select().from(exchanges).where(eq(exchanges.currency,currency));
     } else {
+      console.log("currency time")
       const timeNow = new Date().getTime();
       const timeStart = timeNow - time;
       listingsByCurrencyTime = await db
@@ -52,7 +55,7 @@ export const getReplyInfo = async (
         );
     }
   }
-  let listingsByParameters: {
+  const listingsByParameters: {
     currency: string;
     price: number;
     time: number;

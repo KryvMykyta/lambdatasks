@@ -1,10 +1,8 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const jwt = require("jsonwebtoken");
 const { ApiError } = require("../Errors/ApiError");
 
 require("dotenv").config();
 
-// const uri = `mongodb://${process.env.DBUSER}:${process.env.DBPASS}@cluster0.0dep6w4.mongodb.net/${process.env.DBNAME}?maxPoolSize=2-&w=majority`;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.0dep6w4.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {

@@ -1,17 +1,17 @@
 import {
-    int,
     text,
-    mysqlTable,
-    float
-  } from 'drizzle-orm/mysql-core';
+    doublePrecision,
+    pgTable,
+    bigint
+  } from 'drizzle-orm/pg-core';
 
-export const exchanges = mysqlTable('exchange', {
+export const exchanges = pgTable('exchange', {
     currency: text('currency').notNull(),
-    kucoin: float('kucoin').notNull(),
-    coinStats: float('coinStats').notNull(),
-    coinBase: float('coinBase').notNull(),
-    coinPaprika: float('coinPaprika').notNull(),
-    time: int('time').notNull()
+    kucoin: doublePrecision('kucoin').notNull(),
+    coinStats: doublePrecision('coinStats').notNull(),
+    coinBase: doublePrecision('coinBase').notNull(),
+    coinPaprika: doublePrecision('coinPaprika').notNull(),
+    time: bigint('time',{mode: 'number'}).notNull()
   });
 
 export type markets = "kucoin" | "coinStats" | "coinBase" | "coinPaprika"
