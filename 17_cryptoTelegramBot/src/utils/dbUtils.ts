@@ -65,6 +65,7 @@ export const checkInFavourite = async (
     if (err) {
       console.log(err);
     }
+    console.log(userData)
     const favourite = userData.favourite.split(",");
     const exists = favourite.includes(coinSymbol);
     if (exists) {

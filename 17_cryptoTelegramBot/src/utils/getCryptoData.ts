@@ -25,7 +25,7 @@ type CoinListing = {
   price: string | number
 }
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const BASE_URL = "https://cryptorest.onrender.com/"
 
 const getLatestData = async (coinSymbol: coinSymbol): Promise<CurrencyInfo> =>{
   const url = `${BASE_URL}?currency=${coinSymbol}&time=300000`;
@@ -43,9 +43,11 @@ export const getLatestDataFromCoinsArray = async (
   currencies: Array<coinSymbol>
 ): Promise<Array<CurrencyInfo>> => {
   let currenciesPrices: Array<CurrencyInfo> = [];
-  currencies.forEach(async (currency) => {
-    currenciesPrices = [...currenciesPrices, await getLatestData(currency)];
+  const promises = currencies.map(async (currency) => {
+    const newCoinData = await getLatestData(currency)
+    currenciesPrices.push(newCoinData);
   });
+  await Promise.all(promises)
   return currenciesPrices;
 }
 
