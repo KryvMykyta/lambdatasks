@@ -6,6 +6,8 @@ import { getMessageOfCoinsList } from "./getCryptoData";
 
 const sqlite3 = require("sqlite3").verbose();
 
+const DB_PATH = `./usersDb.db`
+
 type userData = { favourite: string; userId: number; lastViewed: string };
 
 export const sendFavourite = async (
@@ -13,7 +15,7 @@ export const sendFavourite = async (
   callback: (str: string) => void
 ) => {
   const sql = `SELECT * FROM users WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   await db.get(sql, async (err: Error, userData: userData) => {
     if (err) {
       console.log(err);
@@ -30,7 +32,7 @@ export const sendFavourite = async (
 
 export const addToFavourite = async (id: number, coinSymbol: string) => {
   const sql = `SELECT * FROM users WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   await db.get(sql, async (err: Error, userData: userData) => {
     if (err) {
       console.log(err);
@@ -60,7 +62,7 @@ export const checkInFavourite = async (
   msgid: number
 ) => {
   const sql = `SELECT * FROM users WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   await db.get(sql, async (err: Error, userData: userData) => {
     if (err) {
       console.log(err);
@@ -79,7 +81,7 @@ export const checkInFavourite = async (
 
 export const addLastViewed = async (id: number) => {
   const sql = `SELECT * FROM users WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   await db.get(sql, async (err: Error, userData: userData) => {
     if (err) {
       console.log(err);
@@ -94,7 +96,7 @@ export const addLastViewed = async (id: number) => {
 
 export const deleteLastViewed = async (id: number) => {
   const sql = `SELECT * FROM users WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   await db.get(sql, async (err: Error, userData: userData) => {
     if (err) {
       console.log(err);
@@ -107,7 +109,7 @@ export const deleteLastViewed = async (id: number) => {
 
 export const deleteFavourite = async (id: number, coinSymbol: string) => {
   const sql = `SELECT * FROM users WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   await db.get(sql, async (err: Error, userData: userData) => {
     if (err) {
       console.log(err);
@@ -127,7 +129,7 @@ export const deleteFavourite = async (id: number, coinSymbol: string) => {
 
 export const addUserToDb = (id: number) => {
   const sql = `INSERT OR IGNORE INTO users (userId, favourite, lastViewed) VALUES (${id}, "", "")`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   db.run(sql, [], (err: Error) => {
     if (err) {
       console.log(err);
@@ -141,7 +143,7 @@ export const updateLastViewed = (id: number, lastViewed: string) => {
     "/",
     ""
   )}" WHERE userId = ${id}`;
-  const db = new sqlite3.Database(`../usersDb.db`);
+  const db = new sqlite3.Database(DB_PATH);
   db.run(sql, [], (err: Error) => {
     if (err) {
       console.log(err);
