@@ -17,7 +17,7 @@ const putPeople = (filename, people) => {
 };
 
 const addHumanToDB = (human, filename) => {
-  let data = getPeople(filename);
+  const data = getPeople(filename);
   data.push(human);
   putPeople(DBNAME, data);
 };
@@ -25,7 +25,7 @@ const addHumanToDB = (human, filename) => {
 const findPeople = (subName) => {
   const people = getPeople(DBNAME);
   subName = subName.toLowerCase();
-  let foundPeople = [];
+  const foundPeople = [];
   people.forEach((human) => {
     const humanName = human.name.toLowerCase();
     if (humanName.startsWith(subName)) {

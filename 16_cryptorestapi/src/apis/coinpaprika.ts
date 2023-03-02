@@ -1,5 +1,4 @@
 import axios from "axios";
-import { resolve } from "path";
 require("dotenv").config();
 
 const URL = "https://api.coinpaprika.com/v1/tickers";

@@ -2,7 +2,7 @@ import { exchanges } from "../schemas/schemas";
 import { getAllData } from "./getCoinsData";
 import { gte, lte, eq, and } from "drizzle-orm/expressions";
 import { Pool } from 'pg';
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 import { drizzle } from 'drizzle-orm/node-postgres';
 dotenv.config({ path: "../.env" });
 
@@ -16,7 +16,6 @@ type CurrencyRecord = {
 };
 
 export const uploadData = async () => {
-  console.log("started connect")
   const pool = new Pool({
     connectionString: process.env.DB_CONN_STRING,
   });
@@ -40,7 +39,6 @@ export const uploadData = async () => {
     });
 
   });
-  console.log("trying load")
   await db.insert(exchanges).values(...uploadingData)
   const twoDayAgoTime = new Date().getTime() - 2*24*60*60*1000
   await db.delete(exchanges).where(lte(exchanges.time,twoDayAgoTime))

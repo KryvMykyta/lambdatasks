@@ -17,7 +17,7 @@ const loadData = (filename, content) => {
 
 const getMono = async() => {
   const { data: currenciesInfo } = await axios.get(MONO_API_URL);
-  let currencyRates = {};
+  const currencyRates = {};
   currenciesInfo.forEach((currencyInfo) => {
     if (
       currencyInfo.currencyCodeA === 840 &&
@@ -39,7 +39,7 @@ const getMono = async() => {
 
 const getPrivat = async () => {
   const { data: currenciesInfo } = await axios.get(PRIVAT_API_URL);
-  let currencyRates = {};
+  const currencyRates = {};
   currenciesInfo.forEach((currencyInfo) => {
     if (currencyInfo.ccy === "USD") {
       currencyRates.privatUsdSell = Number(currencyInfo.sale);
@@ -55,10 +55,9 @@ const getPrivat = async () => {
 
 const getExchange = async () => {
   try {
-    let exchangeRates = {};
-    let privatRates = await getPrivat();
-    let monoRates = await getMono();
-    exchangeRates = Object.assign(privatRates, monoRates);
+    const privatRates = await getPrivat();
+    const monoRates = await getMono();
+    const exchangeRates = Object.assign(privatRates, monoRates);
     loadData(DBNAME, exchangeRates);
     return exchangeRates;
   } catch (err) {

@@ -2,8 +2,17 @@ import { getCoinBase } from "../apis/coinbase";
 import { getPaprika } from "../apis/coinpaprika";
 import { getKucoin } from "../apis/kucoin";
 import { getCoinStats } from "../apis/coinstats";
+
+type CurrencyPrices = {
+  kucoinPrice: number;
+  coinStatsPrice: number;
+  coinBasePrice: number;
+  paprikaPrice: number;
+};
+
+
 export const getAllData = async (): Promise<{
-  [key: string]: { [key: string]: number };
+  [key: string]: CurrencyPrices;
 }> => {
   const paprika = await getPaprika();
   const coinBase = await getCoinBase();
@@ -33,7 +42,7 @@ export const getAllData = async (): Promise<{
     );
   });
 
-  const currencyRates: { [key: string]: { [key: string]: number } } = {};
+  const currencyRates: { [key: string]: CurrencyPrices } = {};
   currenciesInEvery.forEach((currency) => {
     const paprikaPrice = paprika[currency];
     const kucoinPrice = kucoin[currency];

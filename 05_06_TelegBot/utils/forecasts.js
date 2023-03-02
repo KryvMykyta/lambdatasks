@@ -45,7 +45,7 @@ const getDayString = (dateString) => {
 }
 
 const formatForecastsData = (forecasts, period) => {
-  let uniqueDateStrings = [];
+  const uniqueDateStrings = [];
 
   forecasts.forEach((forecast) => {
     const dateString = forecast.dt_txt.split(" ")[0]; // 2023-02-23 09:00:00 => 2023-02-23
@@ -54,13 +54,13 @@ const formatForecastsData = (forecasts, period) => {
     }
   });
 
-  let forecastsPerDate = {};
+  const forecastsPerDate = {};
 
   uniqueDateStrings.forEach((date) => {
     const currentDateForecasts = forecasts.filter(
       (forecast) => forecast.dt_txt.split(" ")[0] === date
     );
-    let dateForecasts = [];
+    const dateForecasts = [];
     currentDateForecasts.forEach((forecast) => {
       if (getHoursByDateString(forecast.dt_txt) % period === 0) {
         const time = forecast.dt_txt.split(" ")[1];
@@ -80,7 +80,7 @@ const formatForecastsData = (forecasts, period) => {
 }
 
 const logWeather = (forecastsData) => {
-  let messageString = `Forecast for Kyiv\n`;
+  const messageString = `Forecast for Kyiv\n`;
 
   const dates = Object.keys(forecastsData);
 

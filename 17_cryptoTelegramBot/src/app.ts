@@ -33,7 +33,7 @@ const helpMessage =
   "And you can get info about last prices of this coins using /listFavourite command.\n" +
   "That`s all you need to know, hope you`ll be fine.";
 
-bot.onText(/\/start/, async function (msg) {
+bot.onText(/\/start/, async (msg) => {
   const {
     chat: { id },
   } = msg;
@@ -46,7 +46,7 @@ bot.onText(/\/start/, async function (msg) {
   updateLastViewed(id, "");
 });
 
-bot.onText(/\/help/, async function (msg) {
+bot.onText(/\/help/, async (msg) => {
   const {
     chat: { id },
   } = msg;
@@ -54,7 +54,7 @@ bot.onText(/\/help/, async function (msg) {
   updateLastViewed(id, "");
 });
 
-bot.onText(/\/listRecent/, async function (msg) {
+bot.onText(/\/listRecent/, async (msg) => {
   const {
     chat: { id },
   } = msg;
@@ -62,7 +62,7 @@ bot.onText(/\/listRecent/, async function (msg) {
   updateLastViewed(id, "");
 });
 
-bot.onText(/\/listFavourite/, async function (msg) {
+bot.onText(/\/listFavourite/, async (msg) => {
   const {
     chat: { id },
   } = msg;
@@ -73,7 +73,7 @@ bot.onText(/\/listFavourite/, async function (msg) {
   updateLastViewed(id, "");
 });
 
-bot.onText(/^\/[a-zA-Z0-9]{2,6}$/, async function (msg) {
+bot.onText(/^\/[a-zA-Z0-9]{2,6}$/, async (msg) => {
   const {
     text,
     chat: { id },
@@ -93,13 +93,13 @@ bot.onText(/^\/[a-zA-Z0-9]{2,6}$/, async function (msg) {
   }
 });
 
-bot.onText(/^\/addToFavourite [a-zA-Z0-9]{2,6}$/, async function (msg) {
+bot.onText(/^\/addToFavourite [a-zA-Z0-9]{2,6}$/, async (msg) => {
   const coinSymbol = String(msg.text?.split(" ")[1]);
   await addToFavourite(msg.chat.id, coinSymbol);
   updateLastViewed(msg.chat.id, "");
 });
 
-bot.onText(/^\/deleteFavourite [a-zA-Z0-9]{2,6}$/, async function (msg) {
+bot.onText(/^\/deleteFavourite [a-zA-Z0-9]{2,6}$/, async (msg) => {
   const {
     text,
     chat: { id },
@@ -109,7 +109,7 @@ bot.onText(/^\/deleteFavourite [a-zA-Z0-9]{2,6}$/, async function (msg) {
   updateLastViewed(id, "");
 });
 
-bot.onText(/Add to favourite/, async function (msg) {
+bot.onText(/Add to favourite/, async (msg) => {
   const {
     chat: { id },
   } = msg;
@@ -118,7 +118,7 @@ bot.onText(/Add to favourite/, async function (msg) {
   updateLastViewed(id, "");
 });
 
-bot.onText(/Delete from favourite/, async function (msg) {
+bot.onText(/Delete from favourite/, async (msg) => {
   const {
     chat: { id },
   } = msg;

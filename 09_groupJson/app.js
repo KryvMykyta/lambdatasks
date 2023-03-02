@@ -20,13 +20,13 @@ const reformatJson = (oldFileName, newFileName) => {
     fs.readFileSync(oldFileName, { encoding: "utf-8" })
   );
   const uniqueIds = getUniqueIds(weekends);
-  let grouppedWeekends = [];
+  const grouppedWeekends = [];
   uniqueIds.map((id) => {
     const weekendRecordsOfUser = weekends.filter(
       (weekendRecord) => id === weekendRecord.user._id
     );
     const userName = weekendRecordsOfUser[0].user.name;
-    let weekendsGroupped = [];
+    const weekendsGroupped = [];
     weekendRecordsOfUser.map((weekendRecord) => {
       weekendsGroupped.push({
         startDate: weekendRecord.startDate,

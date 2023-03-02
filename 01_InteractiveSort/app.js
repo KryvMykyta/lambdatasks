@@ -16,12 +16,12 @@ const question =
   "or 'exit' to execute the programm\n";
 
 const getNumbers = (arr) => {
-  let resArr = arr.filter((str) => !isNaN(str));
+  const resArr = arr.filter((str) => !isNaN(str));
   return resArr;
 };
 
 const getWords = (arr) => {
-  let resArr = arr.filter((str) => isNaN(str));
+  const resArr = arr.filter((str) => isNaN(str));
   return resArr;
 };
 
