@@ -21,3 +21,14 @@ export const deleteKeyboardOptions = (msgid: number) => {
     },
   };
 };
+
+export const standartKeyboardOptions = () => {
+  return {
+    reply_markup: {
+      resize_keyboard: true,
+      one_time_keyboard: true,
+      remove_keyboard: true,
+      keyboard: [[{ text: "/listFavourite" },{ text: "/listRecent" }],[{ text: "/help" }]],
+    },
+  };
+};
