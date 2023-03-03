@@ -1,10 +1,6 @@
 import { Request, Response } from "express";
-import { getReplyInfo } from "../utils/createReply";
-import dotenv from "dotenv";
 import { markets } from "../schemas/schemas";
-dotenv.config({ path: "../.env" });
-
-
+import { ResponseGenerator } from ".././utils/responseGenerator";
 
 export const getInfo = async (
   req: Request<
@@ -16,5 +12,12 @@ export const getInfo = async (
   res: Response
 ) => {
   const { time, currency, market } = req.query;
-  return res.status(200).send(await getReplyInfo(time, currency, market));
+  try{
+    const responseGenerator = new ResponseGenerator()
+    return res.status(200).send(await responseGenerator.getResponse(time, currency, market));
+  }
+  catch(err) {
+    console.log(err)
+    return res.status(500).send("Something went wrong");
+  }
 }

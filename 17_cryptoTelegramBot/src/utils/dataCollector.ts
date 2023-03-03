@@ -64,11 +64,3 @@ export class DataCollector {
     }
   };
 }
-
-// async function main() {
-//     const creator = new DataCollector("https://cryptorest.onrender.com/")
-//     const msg = await creator.getLatestDataFromCoinsArray(["BTC","ETH","XYAS"])
-//     console.log(msg)
-// }
-
-// main()

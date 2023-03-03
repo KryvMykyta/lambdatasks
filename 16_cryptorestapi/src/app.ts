@@ -1,16 +1,20 @@
+import { infoRouter } from './routers/infoRouter';
+import { ListingsRepository } from './repository/ListingsRepository';
 import express from "express";
 import cron from "node-cron";
-import { getInfo } from "./controllers/infoController";
-import { uploadData } from "./utils/updateDB";
+import dotenv from 'dotenv'
+dotenv.config();
+const CONN_STRING = String(process.env.DB_CONN_STRING)
 
-cron.schedule("*/5 * * * *", uploadData);
+// const repository = new ListingsRepository(CONN_STRING)
+// cron.schedule("*/5 * * * *", repository.updateDB);
 
 const app = express();
 
 const PORT = 3000;
 app.use(express.json());
 
-app.get("/", getInfo);
+app.use("/", infoRouter);
 
 app.listen(PORT, () => {
   console.log("started");

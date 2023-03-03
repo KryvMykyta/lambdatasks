@@ -157,12 +157,3 @@ export class TgBot {
     });
   };
 }
-
-// async function main() {
-//   const DB_PATH = "../../usersDb.db"
-//   const TOKEN = "6011680576:AAHHJYIG7I7KuxMVheQ1ekyg82mfEQt0WY0"
-//   const bot = new TgBot(TOKEN,DB_PATH)
-//   bot.listen()
-// }
-
-// main()
