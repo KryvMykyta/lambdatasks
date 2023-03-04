@@ -1,11 +1,4 @@
 import { DataCollector } from "./dataCollector";
-
-type CurrencyInfo = {
-    currency: string;
-    price: number | string;
-    time: number;
-};
-
 const BASE_URL = "https://cryptorest.onrender.com/"
 const ERR_MESSAGE = "Oops, something went wrong, try make a request later or change your request."
 const REQUEST_INTERVAL = 300000
@@ -53,5 +46,3 @@ export class MessageCreator {
         return ERR_MESSAGE
     }
 }
-
-const coinsList = ["BTC","ETH","XYAS"]
