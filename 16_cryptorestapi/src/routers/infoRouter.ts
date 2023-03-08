@@ -1,6 +1,4 @@
-import { ListingsRepository } from '../repository/ListingsRepository';
-import express, { Router } from "express";
-import cron from "node-cron";
+import { Router } from "express";
 import { getInfo } from "../controllers/infoController";
 
 export const infoRouter = Router();

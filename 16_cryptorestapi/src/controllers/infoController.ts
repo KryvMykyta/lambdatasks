@@ -2,12 +2,14 @@ import { Request, Response } from "express";
 import { markets } from "../schemas/schemas";
 import { ResponseGenerator } from ".././utils/responseGenerator";
 
+type RequestQuery = { time?: number; currency?: string; market?: markets}
+
 export const getInfo = async (
   req: Request<
     {},
     {},
     {},
-    { time?: number; currency?: string; market?: markets}
+    RequestQuery
   >,
   res: Response
 ) => {

@@ -46,10 +46,14 @@ export class ListingsRepository {
   };
 
   public updateDB = async () => {
-    const formatter = new DataFormatter();
-    const uploadingData = await formatter.prepareToUpload();
-    await this.db.insert(exchanges).values(...uploadingData);
-    const twoDayAgoTime = new Date().getTime() - 2 * 24 * 60 * 60 * 1000;
-    await this.db.delete(exchanges).where(lte(exchanges.time, twoDayAgoTime));
+    try{
+      const formatter = new DataFormatter();
+      const uploadingData = await formatter.prepareToUpload();
+      await this.db.insert(exchanges).values(...uploadingData);
+      const twoDayAgoTime = new Date().getTime() - 2 * 24 * 60 * 60 * 1000;
+      await this.db.delete(exchanges).where(lte(exchanges.time, twoDayAgoTime));
+    } catch (err) {
+      console.log(err)
+    }
   };
 }
